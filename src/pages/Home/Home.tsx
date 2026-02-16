@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import rewiringLogo from "../../assets/logos/rewiring_australia_full_logo.png";
 import { useTheme } from "@mui/material/styles";
 import HouseholdForm from "../../components/HouseholdForm/HouseholdForm";
 import HouseholdSavings from "../../components/HouseholdSavings/HouseholdSavings";
@@ -153,21 +152,6 @@ const Home: React.FC = () => {
             },
           }}
         >
-          <Box className="Home-logos">
-            <Box id="rewiring-logo-container">
-              <Link
-                href="https://www.rewiringaustralia.org/"
-                aria-label="Go to Rewiring Australia home page"
-              >
-                <img
-                  src={rewiringLogo}
-                  className={`Home-logo ${isMobile ? "rewiring-logo-mobile" : "rewiring-logo-desktop"}`}
-                  alt="Rewiring Australia logo"
-                />
-              </Link>
-            </Box>
-          </Box>
-
           <Typography
             variant="h1"
           >
