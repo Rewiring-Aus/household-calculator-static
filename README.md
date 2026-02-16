@@ -1,73 +1,92 @@
-# React + TypeScript + Vite
+# Rewiring Australia Household Calculator (Static)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A standalone, frontend-only version of the [Rewiring Australia Household Calculator](https://github.com/Rewiring-Aus/household-calculator-app). All calculation logic runs in the browser — no backend required. Deployable to GitHub Pages or any static host.
 
-Currently, two official plugins are available:
+**Live:** https://rewiring-aus.github.io/household-calculator-static/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## How it works
 
-## React Compiler
+Users enter their household details (location, appliances, vehicles, solar/battery) and instantly see estimated savings from electrifying — covering energy bills, emissions, and upgrade costs. The calculation engine is a TypeScript port of the [Python household model](https://github.com/Rewiring-Aus/household-model).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Development
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev       # Start dev server at http://localhost:5173
+npm run build     # Production build to dist/
+npx vitest run    # Run tests (49 tests)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Query string parameters
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Pre-select a location by passing `?state=` with one of: `nsw`, `vic`, `qld`, `sa`, `wa`, `nt`, `act`, `tas`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+https://rewiring-aus.github.io/household-calculator-static/?state=sa
+```
+
+## Embedding in a website (e.g. Webflow)
+
+The calculator is designed to be embedded via iframe. It posts its content height to the parent page so the iframe can expand to fit without its own scrollbar.
+
+Add this as a custom HTML embed:
+
+```html
+<div id="calculator-container">
+  <iframe
+    id="calculator-iframe"
+    style="width:100%;border:none;overflow:hidden;"
+    scrolling="no"
+    src="https://rewiring-aus.github.io/household-calculator-static/"
+  ></iframe>
+</div>
+
+<script>
+  // Forward parent query string into iframe
+  var qs = window.location.search;
+  if (qs) {
+    var iframe = document.getElementById('calculator-iframe');
+    iframe.src = iframe.src.replace(/\/?$/, '/') + qs;
+  }
+
+  // Resize iframe to match content height
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'calculator-resize') {
+      var iframe = document.getElementById('calculator-iframe');
+      iframe.style.height = e.data.height + 'px';
+    }
+  });
+</script>
+```
+
+This handles two things:
+- **Query string forwarding** — if the parent page URL has `?state=sa`, it gets passed into the iframe so the calculator pre-selects that location.
+- **Auto-resizing** — the calculator posts its content height via `postMessage` whenever the DOM changes (e.g. adding vehicles, expanding sections). The parent listens and resizes the iframe to match, so the page scrolls naturally with no nested scrollbar.
+
+## Tech stack
+
+- Vite + React 18 + TypeScript
+- MUI v5
+- react-hook-form
+- react-router-dom (HashRouter for GitHub Pages)
+- Vitest
+
+## Project structure
+
+```
+src/
+  calculator/           # TypeScript port of Python calculation engine
+    constants/          # Energy data, fuel costs, emissions factors
+    models/             # Electrification logic, recommendations
+    savings/            # Emissions, opex, upfront cost calculations
+    types.ts            # All enums and interfaces
+    calculateSavings.ts # Main entry point
+  components/           # React UI components
+  pages/                # Home, Methodology
+  hooks/                # useHouseholdData
+  services/             # householdDataService (calls calculator directly)
+```
+
+## Deployment
+
+Pushes to `main` automatically deploy to GitHub Pages via the workflow in `.github/workflows/deploy.yml`.
