@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import HouseholdForm from "../../components/HouseholdForm/HouseholdForm";
@@ -33,9 +33,6 @@ const Home: React.FC = () => {
 
   const [searchParams] = useSearchParams();
   const initialLocation = useMemo(() => {
-    // Check hash-based search params first (/#/?state=sa),
-    // then fall back to regular query string (?state=sa) for
-    // compatibility with links that put params before the hash.
     const stateParam =
       searchParams.get("state")?.toLowerCase() ||
       new URLSearchParams(window.location.search).get("state")?.toLowerCase();
@@ -60,68 +57,13 @@ const Home: React.FC = () => {
       : "",
   };
 
-  // -----------------------------------------------------------
-  // Savings Reactive Sticky
-  const savingsRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<HTMLDivElement>(null);
-  const [savingsStyle, setSavingsStyle] = useState({
-    position: "sticky",
-    top: "3.5rem",
-  });
+  const { drawerOpen, toggleDrawer } = useDrawer();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const savingsElement = savingsRef.current;
-      const formElement = formRef.current;
-
-      if (savingsElement && formElement) {
-        const savingsRect = savingsElement.getBoundingClientRect();
-        const formRect = formElement.getBoundingClientRect();
-
-        if (savingsRect.bottom > formRect.bottom) {
-          setSavingsStyle({
-            position: "absolute",
-            top: `${formRect.bottom - savingsRect.height}px`,
-          });
-        } else {
-          setSavingsStyle({ position: "sticky", top: "1rem" });
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  // -----------------------------------------------------------
-  // Drawer
-  const { drawerOpen, toggleDrawer, scrollPosition, setScrollPosition } =
-    useDrawer();
-
-  useEffect(() => {
-    window.scrollTo(0, scrollPosition);
-  }, [scrollPosition]);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      setScrollPosition(window.scrollY);
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [setScrollPosition]);
-
-  // -----------------------------------------------------------
   return (
     <Box
       className="Home"
       sx={{
-        maxWidth: "90rem", // '1440px',
+        maxWidth: "90rem",
         margin: "auto",
       }}
     >
@@ -132,10 +74,10 @@ const Home: React.FC = () => {
           flexDirection: "column",
           [theme.breakpoints.up("md")]: {
             flexDirection: "row",
+            alignItems: "flex-start",
           },
         }}
       >
-        {/* ----------------------------------------------------------- */}
         {/* Home Form */}
         <Box
           className="Home-form"
@@ -152,9 +94,7 @@ const Home: React.FC = () => {
             },
           }}
         >
-          <Typography
-            variant="h1"
-          >
+          <Typography variant="h1">
             How much could you save by going electric?
           </Typography>
           <Typography variant="subtitle1">
@@ -169,10 +109,15 @@ const Home: React.FC = () => {
             sx={{
               fontSize: "0.5rem",
               lineHeight: "0.5rem",
-              fontStyle: "italic"
+              fontStyle: "italic",
             }}
           >
-            The legal bit - Rewiring Australia disclaims and excludes all liability for any claim, loss, demand or damages of any kind whatsoever (including for negligence) arising out of or in connection with the use of either this website or the tools, information, content or materials included on this site or on any website we link to.
+            The legal bit - Rewiring Australia disclaims and excludes all
+            liability for any claim, loss, demand or damages of any kind
+            whatsoever (including for negligence) arising out of or in connection
+            with the use of either this website or the tools, information,
+            content or materials included on this site or on any website we link
+            to.
           </Typography>
 
           {householdData && (
@@ -183,8 +128,7 @@ const Home: React.FC = () => {
             />
           )}
 
-          {/* ----------------------------------------------------------- */}
-          {/* Home Footer */}
+          {/* Footer */}
           <Box
             className="Home-footer"
             sx={{
@@ -194,7 +138,6 @@ const Home: React.FC = () => {
               backgroundColor: theme.palette.background.default,
               textAlign: "center",
               [theme.breakpoints.up("md")]: {
-                // padding: '1rem 2rem 1.5rem 2rem',
                 padding: "0",
               },
             }}
@@ -203,7 +146,7 @@ const Home: React.FC = () => {
               variant="caption"
               sx={{
                 lineHeight: "1.625rem",
-                paddingTop: "1rem"
+                paddingTop: "1rem",
               }}
             >
               © Copyright{" "}
@@ -216,13 +159,9 @@ const Home: React.FC = () => {
               2025
             </Typography>
           </Box>
-          {/* ------------------------------------------------------------------ */}
         </Box>
-        {/* ----------------------------------------------------------- */}
 
-        {/* -------------------------------------------------- */}
-        {/* Home Savings Desktop */}
-
+        {/* Home Savings Desktop — no sticky, scrolls with page */}
         {!isMobile && !isTablet && (
           <Box
             className="Home-savings"
@@ -242,13 +181,7 @@ const Home: React.FC = () => {
                 },
               },
             }}
-            ref={savingsRef}
-            style={{
-              ...savingsStyle,
-              position: savingsStyle.position as "sticky" | "absolute",
-            }}
           >
-            {/* HouseholdSavings Desktop */}
             <HouseholdSavings
               appliances={appliances}
               results={savingsData}
@@ -257,7 +190,6 @@ const Home: React.FC = () => {
             />
           </Box>
         )}
-        {/* -------------------------------------------------- */}
 
         {/* Home Savings Mobile */}
         {(isMobile || isTablet) && (
@@ -270,9 +202,7 @@ const Home: React.FC = () => {
             toggleDrawer={toggleDrawer}
           />
         )}
-        {/* ----------------------------------------------------------- */}
       </Box>
-      {/* ----------------------------------------------------------- */}
     </Box>
   );
 };
