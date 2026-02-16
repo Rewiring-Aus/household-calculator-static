@@ -1,0 +1,4 @@
+export const BATTERY_CYCLES_PER_DAY = 1;
+export const BATTERY_AVG_DEGRADED_PERFORMANCE_15_YRS = 0.667;
+export const BATTERY_LOSSES = 0.05;
+export const BATTERY_COST_PER_KWH = 1100;
