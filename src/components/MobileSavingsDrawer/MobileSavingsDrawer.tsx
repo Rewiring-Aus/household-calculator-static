@@ -41,6 +41,7 @@ const MobileSavingsDrawer = (savings: SavingsDrawerProps) => {
       disableSwipeToOpen={false}
       ModalProps={{
         keepMounted: true,
+        disableScrollLock: true,
       }}
       sx={{
         "& .MuiDrawer-paper": {
