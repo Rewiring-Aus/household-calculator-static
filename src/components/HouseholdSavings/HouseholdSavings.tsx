@@ -19,7 +19,8 @@ import ResultBox from "./ResultBox";
 import OpenIcon from "src/assets/icons/open-outline.svg?react";
 
 // ----------------- Models & Interfaces -------------------
-import { Savings, UpfrontCost } from "src/calculator/types";
+import { Household, Savings, UpfrontCost } from "src/calculator/types";
+import EmailReportForm from "src/components/EmailReportForm/EmailReportForm";
 import { electricVehicleURL } from "src/shared/links";
 import { recommendationActions } from "./data/RecommendationActions";
 
@@ -40,6 +41,7 @@ export interface SavingsProps {
     currentWaterHeater: string;
     currentCooktop: string;
   };
+  household: Household;
   isMobile?: boolean;
 }
 
@@ -74,6 +76,7 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
   loadingData,
   appliances,
   numEVsToBuy,
+  household,
   isMobile = false,
 }) => {
   const theme = useTheme();
@@ -266,6 +269,8 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
             </Link>
           </Typography>
         </Box>
+        <EmailReportForm results={results} household={household} />
+        <FDivider />
       </SavingsFrameBox>
 
       <SavingsFrameBox
