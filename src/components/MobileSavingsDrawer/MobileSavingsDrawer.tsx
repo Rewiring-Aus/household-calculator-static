@@ -27,7 +27,7 @@ const StyledBox = styled("div")(({ theme }) => ({
 }));
 
 const MobileSavingsDrawer = (savings: SavingsDrawerProps) => {
-  const { results, loadingData, appliances, numEVsToBuy } = savings;
+  const { results, loadingData, appliances, numEVsToBuy, household } = savings;
   const { drawerOpen, toggleDrawer } = useDrawer();
   const theme = useTheme();
 
@@ -126,6 +126,7 @@ const MobileSavingsDrawer = (savings: SavingsDrawerProps) => {
           results={results}
           numEVsToBuy={numEVsToBuy}
           loadingData={loadingData}
+          household={household}
         />
       </StyledBox>
     </SwipeableDrawer>
