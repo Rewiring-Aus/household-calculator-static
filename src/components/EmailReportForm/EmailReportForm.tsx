@@ -68,6 +68,9 @@ const EmailReportForm: React.FC<EmailReportFormProps> = ({ results, household })
               'Send report'
             )}
           </Button>
+          <Typography variant="body2" sx={{ mt: 0.75, color: 'text.secondary' }}>
+            You'll receive updates from Rewiring Australia.
+          </Typography>
           {formState === 'error' && (
             <Typography variant="body2" color="error" sx={{ mt: 0.5 }}>
               Something went wrong, please try again.
