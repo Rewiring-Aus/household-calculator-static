@@ -40,7 +40,7 @@ export const SwitchLabel = styled(FormLabel)(({ theme }: { theme: Theme }) => ({
 export const FormContainer = styled(Box)(({ theme }: { theme: Theme }) => ({
   display: "flex",
   flexWrap: "wrap",
-  gap: "2rem",
+  gap: "1.25rem",
   justifyContent: "space-between",
 }));
 

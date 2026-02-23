@@ -1265,8 +1265,8 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
             variant="caption"
             sx={{
               fontStyle: "italic",
-              marginTop: "0.25rem",
-              marginBottom: "1.5rem",
+              marginTop: 0,
+              marginBottom: "0.5rem",
               color: theme.palette.text.secondary,
             }}
           >
@@ -1342,7 +1342,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
               theme={theme}
               className="FormSectionGrid"
               sx={{
-                margin: "1.8rem 0",
+                margin: "0.8rem 0",
                 width: "100%",
                 display: "grid",
                 gridTemplateColumns: "repeat(1, 1fr)",
