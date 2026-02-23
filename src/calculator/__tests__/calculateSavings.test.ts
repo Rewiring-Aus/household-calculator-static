@@ -44,14 +44,15 @@ describe('calculateSavings - golden test with default household', () => {
   });
 
   it('should calculate upfront costs correctly', () => {
-    // Solar cost: SOLAR_COST_PER_KW[NSW] * 7kW = 791 * 7 = 5537
-    expectClose(result.upfrontCost!.solar!, 5537, 1);
-    // Battery cost: BATTERY_COST_PER_KWH * 11kWh = 1100 * 11 = 12100
-    expectClose(result.upfrontCost!.battery!, 12100, 1);
+    // Solar cost: SOLAR_COST_PER_KW[NSW] * 10kW = 791 * 10 = 7910
+    expectClose(result.upfrontCost!.solar!, 7910, 1);
+    // Battery cost: (BATTERY_COST_INTERCEPT + BATTERY_COST_PER_KWH * 13kWh) - BATTERY_COST_INTERCEPT
+    // = 610.71 * 13 = 7939.23
+    expectClose(result.upfrontCost!.battery!, 7939.23, 1);
     // Cooktop: gas → induction = item_price + install_cost = 1400 + 600 = 2000
     expectClose(result.upfrontCost!.cooktop!, 2000, 1);
-    // Water heating: electric resistance → stays same = 0
-    expect(result.upfrontCost!.waterHeating).toBe(0);
+    // Water heating: gas → heat pump = 3500
+    expect(result.upfrontCost!.waterHeating).toBe(3500);
     // Space heating: heat pump → stays same = 0
     expect(result.upfrontCost!.spaceHeating).toBe(0);
   });

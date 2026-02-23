@@ -155,13 +155,13 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
       >
         <ResultBox
           label="Energy & Fuel Bills"
-          heading={`${formatSavingsNZD(results?.opex?.perWeek?.difference, 0)} saved per week`}
+          heading={`${formatSavingsNZD(results?.opex?.perYear?.difference, 0)} saved per year`}
         >
           <Typography variant="body1">
             <span style={{ fontWeight: "600" }}>
-              {` ${formatSavingsNZD(results?.opex?.perYear?.difference, 0)}`}
+              {` ${formatSavingsNZD(results?.opex?.perWeek?.difference, 0)}`}
             </span>{" "}
-            saved per year
+            saved per week
           </Typography>
           <Typography variant="body1">
             <span style={{ fontWeight: "600" }}>
@@ -262,15 +262,14 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
           )}
         </ResultBox>
         <FDivider />
-        <Box sx={{ marginTop: "1.2rem", marginBottom: "1.2rem" }}>
+        <EmailReportForm results={results} household={household} />
+        <Box sx={{ marginTop: "1.2rem", marginBottom: "0.4rem" }}>
           <Typography variant="body1">
             <Link component={RouterLink} to="/methodology">
               How did we calculate this?
             </Link>
           </Typography>
         </Box>
-        <EmailReportForm results={results} household={household} />
-        <FDivider />
       </SavingsFrameBox>
 
       <SavingsFrameBox

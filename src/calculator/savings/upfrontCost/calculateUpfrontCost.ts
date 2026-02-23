@@ -1,4 +1,4 @@
-import { BATTERY_COST_PER_KWH } from '../../constants/battery';
+import { BATTERY_COST_INTERCEPT, BATTERY_COST_PER_KWH } from '../../constants/battery';
 import { COOKTOP_UPFRONT_COST } from '../../constants/machines/cooktop';
 import {
   N_HEAT_PUMPS_NEEDED_PER_LOCATION,
@@ -18,7 +18,7 @@ function getSolarUpfrontCost(current: Solar, location: LocationEnum): number {
 
 function getBatteryUpfrontCost(current: Battery): number {
   if (shouldInstall(current)) {
-    return Math.round(BATTERY_COST_PER_KWH * (current.capacity ?? 0) * 100) / 100;
+    return Math.round((BATTERY_COST_INTERCEPT + BATTERY_COST_PER_KWH * (current.capacity ?? 0)) * 100) / 100;
   }
   return 0;
 }
@@ -51,9 +51,17 @@ function getSpaceHeatingUpfrontCost(
 }
 
 export function calculateUpfrontCost(current: Household, electrified: Household): UpfrontCost {
+  const installSolar = shouldInstall(current.solar!);
+  const installBattery = shouldInstall(current.battery!);
+
+  let batteryCost = getBatteryUpfrontCost(current.battery!);
+  if (installSolar && installBattery) {
+    batteryCost = Math.max(0, batteryCost - BATTERY_COST_INTERCEPT);
+  }
+
   return {
     solar: getSolarUpfrontCost(current.solar!, current.location!),
-    battery: getBatteryUpfrontCost(current.battery!),
+    battery: batteryCost,
     cooktop: getCooktopUpfrontCost(current.cooktop!, electrified.cooktop!),
     waterHeating: getWaterHeatingUpfrontCost(current.waterHeating!, electrified.waterHeating!),
     spaceHeating: getSpaceHeatingUpfrontCost(

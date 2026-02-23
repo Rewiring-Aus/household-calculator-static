@@ -56,6 +56,7 @@ const EmailReportForm: React.FC<EmailReportFormProps> = ({ results, household })
             fullWidth
             sx={{
               textTransform: 'initial',
+              fontSize: '1.0625rem',
               borderRadius: '8px',
               boxShadow: 'none',
               padding: '0.75rem',
@@ -68,7 +69,7 @@ const EmailReportForm: React.FC<EmailReportFormProps> = ({ results, household })
               'Send report'
             )}
           </Button>
-          <Typography variant="body2" sx={{ mt: 0.75, color: 'text.secondary' }}>
+          <Typography variant="caption" sx={{ mt: 0.75, color: 'text.secondary', display: 'block' }}>
             You'll receive updates from Rewiring Australia.
           </Typography>
           {formState === 'error' && (

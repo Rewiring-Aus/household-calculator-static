@@ -390,30 +390,34 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                     Location
                   </FormLabel>
                 </LabelBox>
-                <HouseSelect
-                  IconComponent={chevronDown}
-                  inputProps={{
-                    id: "location",
-                  }}
-                  value={watchAllFields.location}
-                  {...methods.register("location", { required: true })}
-                >
-                  {formText.options.location.map(
-                    (option: Option<LocationEnum>) => (
-                      <HouseMenuItem
-                        theme={theme}
-                        key={option.value}
-                        value={option.value}
-                        selected={watchAllFields.location === option.value}
-                        onClick={() => setValue("location", option.value)}
-                      >
-                        {option.text}
-                      </HouseMenuItem>
-                    ),
+                <Controller
+                  name="location"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <HouseSelect
+                      {...field}
+                      IconComponent={chevronDown}
+                      inputProps={{
+                        id: "location",
+                      }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
+                    >
+                      {formText.options.location.map(
+                        (option: Option<LocationEnum>) => (
+                          <HouseMenuItem
+                            theme={theme}
+                            key={option.value}
+                            value={option.value}
+                            selected={field.value === option.value}
+                          >
+                            {option.text}
+                          </HouseMenuItem>
+                        ),
+                      )}
+                    </HouseSelect>
                   )}
-                </HouseSelect>
-                {/* )}
-          /> */}
+                />
                 {methods.formState.errors.location && (
                   <FormHelperText>This field is required</FormHelperText>
                 )}
@@ -428,25 +432,32 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                     Number of occupants
                   </FormLabel>
                 </LabelBox>
-                <HouseSelect
-                  IconComponent={chevronDown}
-                  inputProps={{
-                    id: "occupancy",
-                  }}
-                  value={watchAllFields.occupancy}
-                  {...methods.register("occupancy", { required: true })}
-                >
-                  {formText.options.occupancy.map((option: OptionNumber) => (
-                    <HouseMenuItem
-                      theme={theme}
-                      key={option.value}
-                      value={option.value}
-                      selected={watchAllFields.occupancy === option.value}
+                <Controller
+                  name="occupancy"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <HouseSelect
+                      {...field}
+                      IconComponent={chevronDown}
+                      inputProps={{
+                        id: "occupancy",
+                      }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
                     >
-                      {option.text}
-                    </HouseMenuItem>
-                  ))}
-                </HouseSelect>
+                      {formText.options.occupancy.map((option: OptionNumber) => (
+                        <HouseMenuItem
+                          theme={theme}
+                          key={option.value}
+                          value={option.value}
+                          selected={field.value === option.value}
+                        >
+                          {option.text}
+                        </HouseMenuItem>
+                      ))}
+                    </HouseSelect>
+                  )}
+                />
                 {methods.formState.errors.occupancy && (
                   <FormHelperText>This field is required</FormHelperText>
                 )}
@@ -530,42 +541,49 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                   </HouseholdTooltip>
                 </LabelBox>
 
-                <HouseSelect
-                  IconComponent={chevronDown}
-                  labelId="spaceHeating-label"
-                  id="spaceHeating"
-                  inputProps={{
-                    id: "spaceHeating-input",
-                  }}
-                  value={watchAllFields.spaceHeating}
-                  {...methods.register("spaceHeating", { required: true })}
-                  sx={{
-                    "& #spaceHeating": {
-                      backgroundColor:
-                        watchAllFields.spaceHeating !==
-                          SpaceHeatingEnum.ElectricHeatPump &&
-                          watchAllFields.spaceHeating !==
-                          SpaceHeatingEnum.ElectricResistance &&
-                          watchAllFields.spaceHeating !==
-                          SpaceHeatingEnum.None
-                          ? theme.palette.warning.light
-                          : theme.palette.success.light,
-                    },
-                  }}
-                >
-                  {formText.options.spaceHeating.map(
-                    (option: Option<SpaceHeatingEnum>) => (
-                      <HouseMenuItem
-                        theme={theme}
-                        key={option.value}
-                        value={option.value}
-                        selected={watchAllFields.spaceHeating === option.value}
-                      >
-                        {option.text}
-                      </HouseMenuItem>
-                    ),
+                <Controller
+                  name="spaceHeating"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <HouseSelect
+                      {...field}
+                      IconComponent={chevronDown}
+                      labelId="spaceHeating-label"
+                      id="spaceHeating"
+                      inputProps={{
+                        id: "spaceHeating-input",
+                      }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
+                      sx={{
+                        "& #spaceHeating": {
+                          backgroundColor:
+                            field.value !==
+                              SpaceHeatingEnum.ElectricHeatPump &&
+                              field.value !==
+                              SpaceHeatingEnum.ElectricResistance &&
+                              field.value !==
+                              SpaceHeatingEnum.None
+                              ? theme.palette.warning.light
+                              : theme.palette.success.light,
+                        },
+                      }}
+                    >
+                      {formText.options.spaceHeating.map(
+                        (option: Option<SpaceHeatingEnum>) => (
+                          <HouseMenuItem
+                            theme={theme}
+                            key={option.value}
+                            value={option.value}
+                            selected={field.value === option.value}
+                          >
+                            {option.text}
+                          </HouseMenuItem>
+                        ),
+                      )}
+                    </HouseSelect>
                   )}
-                </HouseSelect>
+                />
                 {methods.formState.errors.spaceHeating && (
                   <FormHelperText>This field is required</FormHelperText>
                 )}
@@ -616,42 +634,49 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                   </HouseholdTooltip>
                 </LabelBox>
 
-                <HouseSelect
-                  IconComponent={chevronDown}
-                  labelId="waterHeating-label"
-                  id="waterHeating"
-                  inputProps={{
-                    id: "waterHeating-input",
-                  }}
-                  value={watchAllFields.waterHeating}
-                  {...methods.register("waterHeating", { required: true })}
-                  sx={{
-                    "& #waterHeating": {
-                      backgroundColor:
-                        watchAllFields.waterHeating !==
-                          WaterHeatingEnum.ElectricHeatPump &&
-                          watchAllFields.waterHeating !==
-                          WaterHeatingEnum.ElectricResistance &&
-                          watchAllFields.waterHeating !==
-                          WaterHeatingEnum.Solar
-                          ? theme.palette.warning.light
-                          : theme.palette.success.light,
-                    },
-                  }}
-                >
-                  {formText.options.waterHeating.map(
-                    (option: Option<WaterHeatingEnum>) => (
-                      <HouseMenuItem
-                        theme={theme}
-                        key={option.value}
-                        value={option.value}
-                        selected={watchAllFields.waterHeating === option.value}
-                      >
-                        {option.text}
-                      </HouseMenuItem>
-                    ),
+                <Controller
+                  name="waterHeating"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <HouseSelect
+                      {...field}
+                      IconComponent={chevronDown}
+                      labelId="waterHeating-label"
+                      id="waterHeating"
+                      inputProps={{
+                        id: "waterHeating-input",
+                      }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
+                      sx={{
+                        "& #waterHeating": {
+                          backgroundColor:
+                            field.value !==
+                              WaterHeatingEnum.ElectricHeatPump &&
+                              field.value !==
+                              WaterHeatingEnum.ElectricResistance &&
+                              field.value !==
+                              WaterHeatingEnum.Solar
+                              ? theme.palette.warning.light
+                              : theme.palette.success.light,
+                        },
+                      }}
+                    >
+                      {formText.options.waterHeating.map(
+                        (option: Option<WaterHeatingEnum>) => (
+                          <HouseMenuItem
+                            theme={theme}
+                            key={option.value}
+                            value={option.value}
+                            selected={field.value === option.value}
+                          >
+                            {option.text}
+                          </HouseMenuItem>
+                        ),
+                      )}
+                    </HouseSelect>
                   )}
-                </HouseSelect>
+                />
                 {methods.formState.errors.waterHeating && (
                   <FormHelperText>This field is required</FormHelperText>
                 )}
@@ -700,40 +725,47 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                   </HouseholdTooltip>
                 </LabelBox>
 
-                <HouseSelect
-                  IconComponent={chevronDown}
-                  labelId="cooktop-label"
-                  id="cooktop"
-                  inputProps={{
-                    id: "cooktop-input",
-                  }}
-                  value={watchAllFields.cooktop}
-                  {...methods.register("cooktop", { required: true })}
-                  sx={{
-                    "& #cooktop": {
-                      backgroundColor:
-                        watchAllFields.cooktop !==
-                          CooktopEnum.ElectricInduction &&
-                          watchAllFields.cooktop !==
-                          CooktopEnum.ElectricResistance
-                          ? theme.palette.warning.light
-                          : theme.palette.success.light,
-                    },
-                  }}
-                >
-                  {formText.options.cooktop.map(
-                    (option: Option<CooktopEnum>) => (
-                      <HouseMenuItem
-                        theme={theme}
-                        key={option.value}
-                        value={option.value}
-                        selected={watchAllFields.cooktop === option.value}
-                      >
-                        {option.text}
-                      </HouseMenuItem>
-                    ),
+                <Controller
+                  name="cooktop"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <HouseSelect
+                      {...field}
+                      IconComponent={chevronDown}
+                      labelId="cooktop-label"
+                      id="cooktop"
+                      inputProps={{
+                        id: "cooktop-input",
+                      }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
+                      sx={{
+                        "& #cooktop": {
+                          backgroundColor:
+                            field.value !==
+                              CooktopEnum.ElectricInduction &&
+                              field.value !==
+                              CooktopEnum.ElectricResistance
+                              ? theme.palette.warning.light
+                              : theme.palette.success.light,
+                        },
+                      }}
+                    >
+                      {formText.options.cooktop.map(
+                        (option: Option<CooktopEnum>) => (
+                          <HouseMenuItem
+                            theme={theme}
+                            key={option.value}
+                            value={option.value}
+                            selected={field.value === option.value}
+                          >
+                            {option.text}
+                          </HouseMenuItem>
+                        ),
+                      )}
+                    </HouseSelect>
                   )}
-                </HouseSelect>
+                />
                 {methods.formState.errors.cooktop && (
                   <FormHelperText>This field is required</FormHelperText>
                 )}
@@ -1233,6 +1265,20 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
             </HalfWidthFormBox>
           </FormSectionFlex>
 
+          <Typography
+            variant="caption"
+            sx={{
+              fontStyle: "italic",
+              marginTop: "0.25rem",
+              marginBottom: "1.5rem",
+              color: theme.palette.text.secondary,
+            }}
+          >
+            Buying solar and a battery together is usually better value as you
+            only need one inverter. If you say you don't have either, we
+            include a saving in the battery cost in this calculator.
+          </Typography>
+
           {/* Transport section */}
 
           <FormBox theme={theme} className="formBox">
@@ -1268,11 +1314,11 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                     control={methods.control}
                     render={({ field }) => (
                       <HouseSelect
+                        {...field}
                         IconComponent={chevronDown}
                         labelId="number-of-vehicles-label"
-                        {...field}
-                        value={numberOfVehicles}
                         inputProps={{ id: "numberOfVehicles-input" }}
+                        MenuProps={{ disableScrollLock: true, disablePortal: true }}
                       >
                         {formText.options.vehicle.amount.map(
                           (option: OptionNumber) => (
@@ -1280,7 +1326,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                               theme={theme}
                               key={option.value}
                               value={option.value}
-                              selected={numberOfVehicles === option.value}
+                              selected={field.value === option.value}
                             >
                               {option.text}
                             </HouseMenuItem>
