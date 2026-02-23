@@ -262,7 +262,10 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
           )}
         </ResultBox>
         <FDivider />
-        <EmailReportForm results={results} household={household} />
+        <Box sx={{ marginTop: "1.2rem", marginBottom: "1.2rem" }}>
+          <EmailReportForm results={results} household={household} />
+        </Box>
+        <FDivider />
         <Box sx={{ marginTop: "1.2rem", marginBottom: "0.4rem" }}>
           <Typography variant="body1">
             <Link component={RouterLink} to="/methodology">
