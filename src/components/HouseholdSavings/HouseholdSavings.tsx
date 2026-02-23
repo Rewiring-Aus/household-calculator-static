@@ -119,13 +119,8 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
         gap: "1rem",
         borderRadius: 0,
         margin: "auto 0",
-        position: "sticky",
-        top: "2rem",
         [theme.breakpoints.up("sm")]: {
           borderRadius: 1,
-        },
-        [theme.breakpoints.up("lg")]: {
-          top: "3.5rem",
         },
       }}
       aria-label="Household Savings Section"

@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import HouseholdForm from "../../components/HouseholdForm/HouseholdForm";
 import HouseholdSavings from "../../components/HouseholdSavings/HouseholdSavings";
+import OpexBreakdown from "../../components/OpexBreakdown/OpexBreakdown";
 import { Box, Link, Typography, useMediaQuery } from "@mui/material";
 import useHouseholdData from "src/hooks/useHouseholdData/useHouseholdData";
 import { LocationEnum } from "src/calculator/types";
@@ -11,8 +12,6 @@ import {
   spaceHeatingMapping,
   waterHeatingMapping,
 } from "src/components/HouseholdForm/data/householdForm.text";
-import MobileSavingsDrawer from "src/components/MobileSavingsDrawer/MobileSavingsDrawer";
-import { useDrawer } from "src/components/MobileSavingsDrawer/DrawerContext";
 import { decodeHousehold, encodeHousehold } from "src/utils/householdUrlEncoding";
 import "./Home.css";
 
@@ -115,27 +114,6 @@ const Home: React.FC = () => {
   }, []);
 
   // -----------------------------------------------------------
-  // Drawer
-  const { drawerOpen, toggleDrawer, scrollPosition, setScrollPosition } =
-    useDrawer();
-
-  useEffect(() => {
-    window.scrollTo(0, scrollPosition);
-  }, [scrollPosition]);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      setScrollPosition(window.scrollY);
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [setScrollPosition]);
-
-  // -----------------------------------------------------------
   return (
     <Box
       className="Home"
@@ -198,43 +176,47 @@ const Home: React.FC = () => {
             <HouseholdForm
               householdData={householdData}
               updateHouseholdData={updateHouseholdData}
-              savingsData={savingsData}
             />
           )}
 
-          {/* ----------------------------------------------------------- */}
-          {/* Home Footer */}
-          <Box
-            className="Home-footer"
-            sx={{
-              padding: "1rem 1rem 5rem 1rem",
-              position: "relative",
-              display: "flex",
-              backgroundColor: theme.palette.background.default,
-              textAlign: "center",
-              [theme.breakpoints.up("md")]: {
-                // padding: '1rem 2rem 1.5rem 2rem',
-                padding: "0",
-              },
-            }}
-          >
-            <Typography
-              variant="caption"
+          {/* Opex breakdown — desktop only (mobile version renders after savings) */}
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <OpexBreakdown savingsData={savingsData} />
+          </Box>
+
+          {/* Home Footer — desktop only (mobile version renders after savings) */}
+          {!isMobile && !isTablet && (
+            <Box
+              className="Home-footer"
               sx={{
-                lineHeight: "1.625rem",
-                paddingTop: "1rem"
+                padding: "1rem",
+                position: "relative",
+                display: "flex",
+                backgroundColor: theme.palette.background.default,
+                textAlign: "center",
+                [theme.breakpoints.up("md")]: {
+                  padding: "0",
+                },
               }}
             >
-              © Copyright{" "}
-              <Link
-                href="https://www.rewiringaustralia.org/"
-                aria-label="Go to Rewiring Australia home page"
+              <Typography
+                variant="caption"
+                sx={{
+                  lineHeight: "1.625rem",
+                  paddingTop: "1rem"
+                }}
               >
-                Rewiring Australia
-              </Link>{" "}
-              2025
-            </Typography>
-          </Box>
+                © Copyright{" "}
+                <Link
+                  href="https://www.rewiringaustralia.org/"
+                  aria-label="Go to Rewiring Australia home page"
+                >
+                  Rewiring Australia
+                </Link>{" "}
+                2025
+              </Typography>
+            </Box>
+          )}
           {/* ------------------------------------------------------------------ */}
         </Box>
         {/* ----------------------------------------------------------- */}
@@ -279,17 +261,57 @@ const Home: React.FC = () => {
         )}
         {/* -------------------------------------------------- */}
 
-        {/* Home Savings Mobile */}
+        {/* Home Savings Mobile — inline below form */}
         {(isMobile || isTablet) && (
-          <MobileSavingsDrawer
-            appliances={appliances}
-            results={savingsData}
-            loadingData={loadingData}
-            numEVsToBuy={numEVsToBuy}
-            drawerOpen={drawerOpen}
-            toggleDrawer={toggleDrawer}
-            household={householdData ?? {}}
-          />
+          <Box
+            sx={{
+              padding: "1rem",
+              [theme.breakpoints.up("sm")]: {
+                padding: "1rem 1rem 2rem 1rem",
+              },
+            }}
+          >
+            <HouseholdSavings
+              appliances={appliances}
+              results={savingsData}
+              numEVsToBuy={numEVsToBuy}
+              loadingData={loadingData}
+              household={householdData ?? {}}
+            />
+          </Box>
+        )}
+
+        {/* Opex breakdown + copyright — mobile only, rendered after savings */}
+        {(isMobile || isTablet) && (
+          <Box
+            sx={{
+              padding: "1rem",
+              backgroundColor: theme.palette.background.default,
+              [theme.breakpoints.up("sm")]: {
+                padding: "0 1rem 2rem 1rem",
+              },
+            }}
+          >
+            <OpexBreakdown savingsData={savingsData} />
+            <Box
+              sx={{
+                paddingTop: "1rem",
+                display: "flex",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="caption" sx={{ lineHeight: "1.625rem" }}>
+                © Copyright{" "}
+                <Link
+                  href="https://www.rewiringaustralia.org/"
+                  aria-label="Go to Rewiring Australia home page"
+                >
+                  Rewiring Australia
+                </Link>{" "}
+                2025
+              </Typography>
+            </Box>
+          </Box>
         )}
         {/* ----------------------------------------------------------- */}
       </Box>
