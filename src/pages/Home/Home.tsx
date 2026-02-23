@@ -13,6 +13,7 @@ import {
 } from "src/components/HouseholdForm/data/householdForm.text";
 import MobileSavingsDrawer from "src/components/MobileSavingsDrawer/MobileSavingsDrawer";
 import { useDrawer } from "src/components/MobileSavingsDrawer/DrawerContext";
+import { decodeHousehold, encodeHousehold } from "src/utils/householdUrlEncoding";
 import "./Home.css";
 
 const stateParamToLocation: Record<string, LocationEnum> = {
@@ -31,7 +32,8 @@ const Home: React.FC = () => {
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const initialLocation = useMemo(() => {
     // Check hash-based search params first (/#/?state=sa),
     // then fall back to regular query string (?state=sa) for
@@ -42,8 +44,25 @@ const Home: React.FC = () => {
     return stateParam ? stateParamToLocation[stateParam] : undefined;
   }, [searchParams]);
 
+  const initialHousehold = useMemo(() => {
+    const hParam =
+      searchParams.get("h") ||
+      new URLSearchParams(window.location.search).get("h");
+    if (hParam) return decodeHousehold(hParam) ?? undefined;
+    return undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const { householdData, updateHouseholdData, savingsData, loadingData } =
-    useHouseholdData(initialLocation);
+    useHouseholdData(initialLocation, initialHousehold);
+
+  // Keep URL in sync with current household selections
+  useEffect(() => {
+    if (householdData) {
+      setSearchParams({ h: encodeHousehold(householdData) });
+    }
+  }, [householdData, setSearchParams]);
+
   const numEVsToBuy =
     householdData?.vehicles?.filter((vehicle) => vehicle.switchToEV).length ||
     0;
@@ -254,6 +273,7 @@ const Home: React.FC = () => {
               results={savingsData}
               numEVsToBuy={numEVsToBuy}
               loadingData={loadingData}
+              household={householdData ?? {}}
             />
           </Box>
         )}
@@ -268,6 +288,7 @@ const Home: React.FC = () => {
             numEVsToBuy={numEVsToBuy}
             drawerOpen={drawerOpen}
             toggleDrawer={toggleDrawer}
+            household={householdData ?? {}}
           />
         )}
         {/* ----------------------------------------------------------- */}
