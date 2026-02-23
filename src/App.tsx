@@ -7,9 +7,13 @@ import theme from "./theme/theme";
 
 function usePostHeight() {
   useEffect(() => {
+    let lastHeight = 0;
     const postHeight = () => {
       const height = document.documentElement.scrollHeight;
-      window.parent.postMessage({ type: "calculator-resize", height }, "*");
+      if (height !== lastHeight) {
+        lastHeight = height;
+        window.parent.postMessage({ type: "calculator-resize", height }, "*");
+      }
     };
 
     // Debounced version to avoid spamming the parent frame

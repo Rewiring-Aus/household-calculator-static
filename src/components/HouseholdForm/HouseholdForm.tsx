@@ -1261,11 +1261,10 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
             </HalfWidthFormBox>
           </FormSectionFlex>
 
-          <Typography
-            variant="caption"
+          <FormHelperText
             sx={{
               fontStyle: "italic",
-              marginTop: 0,
+              marginTop: "-0.5rem",
               marginBottom: "0.5rem",
               color: theme.palette.text.secondary,
             }}
@@ -1273,7 +1272,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
             Buying solar and a battery together is usually better value as you
             only need one inverter. If you say you don't have either, we
             include a saving in the battery cost in this calculator.
-          </Typography>
+          </FormHelperText>
 
           {/* Transport section */}
 

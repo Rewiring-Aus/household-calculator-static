@@ -174,7 +174,7 @@ const Methodology: React.FC = () => {
               and degradation over 30 years (averaging 93.08% of nameplate
               capacity performance), with regional variations in solar capacity.
               Battery capacity is determined by size, degradation (averaging
-              85.22% of nameplate capacity over 15 year lieftime), and
+              85.22% of nameplate capacity over 15 year lifetime), and
               round-trip efficiency (95%).
             </Typography>
 
@@ -215,7 +215,7 @@ const Methodology: React.FC = () => {
               costs based on the battery's ability to shift grid consumption to
               off-peak hours. For other energy & fuel types like gas, petrol,
               and diesel, we simply multiply the energy consumption with the
-              price per kWh. Weekly and yearly savings use 2024 prices, while
+              price per kWh. Weekly and yearly savings use 2025 prices, while
               savings over 15 years consider future price inflation.
             </Typography>
             <Typography variant="body2">
@@ -253,7 +253,7 @@ const Methodology: React.FC = () => {
               upgrades - we plan to include this analysis in future. In the
               meantime, you can check out our{" "}
               <Link
-                href="https://rewiringaustralia.org/research-and-resources"
+                href="https://rewiringaustralia.org/go-electric/resources"
                 target="_blank"
               >
                 electrification fact sheets
@@ -272,7 +272,13 @@ const Methodology: React.FC = () => {
               normally be losing $30k-$70k outright for every EV you buy.
             </Typography>
             <Typography variant="body2">
-              The upfront cost of solar installation is estimated at $950/kW, based on 2026 data from the Solar Choice. Inverter upgrade costs are assumed at $2,000. Battery costs are estimated at $950/kWh based on similar sources. Again, installation costs will vary by region and installer.
+              The upfront cost of solar installation is estimated at $950/kW
+              using data from Solar Choice. Inverter replacement costs are
+              assumed at $2,500. Battery upfront costs are modelled with a fixed
+              cost of $2,668 plus $610 per kWh of storage
+              (this includes the discount from the Cheaper Home Batteries
+              program as of February 2026). Real costs will vary by region and
+              installer.
             </Typography>
             <Typography variant="h2">Recommendations (Next Steps)</Typography>
             <Typography variant="body2">
@@ -301,7 +307,7 @@ const Methodology: React.FC = () => {
                 href="https://rewiringaustralia.org/research-and-resources"
                 target="_blank"
               >
-                Vist Rewiring Australia's Research and Resources page
+                Visit Rewiring Australia's Research and Resources page
               </Link>{" "}
               to find fact sheets, research reports and submissions on electrification
             </Typography>
@@ -316,23 +322,6 @@ const Methodology: React.FC = () => {
                 Dive into our detailed methodology
               </Link>{" "}
               including energy consumption values, prices, and emissions factors
-            </Typography>
-            <Typography variant="body2">
-              👩🏻‍💻&nbsp;See our open-source&nbsp;
-              <Link
-                href="https://github.com/Rewiring-Aus/household-model"
-                target="_blank"
-              >
-                Python model
-              </Link>
-              &nbsp;and&nbsp;
-              <Link
-                href="https://github.com/Rewiring-Aus/household-calculator-app"
-                target="_blank"
-              >
-                React app
-              </Link>
-              &nbsp;on GitHub
             </Typography>
 
             <Typography variant="body2">
