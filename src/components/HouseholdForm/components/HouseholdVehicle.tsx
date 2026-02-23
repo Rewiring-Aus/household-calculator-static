@@ -161,7 +161,7 @@ const VehicleBox = React.forwardRef<HTMLDivElement, VehicleBoxProps>((props, ref
                   field.onChange(e);
                   handleFuelTypeChange(e as SelectChangeEvent<VehicleFuelTypeEnum>);
                 }}
-                MenuProps={{ disableScrollLock: true }}
+                MenuProps={{ disableScrollLock: true, disablePortal: true }}
                 sx={{
                   [`& #vehicles-fuelType-${index}`]: {
                     backgroundColor:
@@ -345,7 +345,7 @@ const VehicleBox = React.forwardRef<HTMLDivElement, VehicleBoxProps>((props, ref
                       field.onChange(e);
                       handleUsageTypeChange(selectedType);
                     }}
-                    MenuProps={{ disableScrollLock: true }}
+                    MenuProps={{ disableScrollLock: true, disablePortal: true }}
                     renderValue={(selectedType: UsageType) => {
                       const selectedOption: UsageOption | undefined =
                         usageOptions.find(

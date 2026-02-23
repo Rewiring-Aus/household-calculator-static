@@ -401,7 +401,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "location",
                       }}
-                      MenuProps={{ disableScrollLock: true }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
                     >
                       {formText.options.location.map(
                         (option: Option<LocationEnum>) => (
@@ -443,7 +443,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "occupancy",
                       }}
-                      MenuProps={{ disableScrollLock: true }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
                     >
                       {formText.options.occupancy.map((option: OptionNumber) => (
                         <HouseMenuItem
@@ -554,7 +554,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "spaceHeating-input",
                       }}
-                      MenuProps={{ disableScrollLock: true }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
                       sx={{
                         "& #spaceHeating": {
                           backgroundColor:
@@ -647,7 +647,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "waterHeating-input",
                       }}
-                      MenuProps={{ disableScrollLock: true }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
                       sx={{
                         "& #waterHeating": {
                           backgroundColor:
@@ -738,7 +738,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "cooktop-input",
                       }}
-                      MenuProps={{ disableScrollLock: true }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
                       sx={{
                         "& #cooktop": {
                           backgroundColor:
@@ -1269,14 +1269,14 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
             variant="body2"
             sx={{
               fontStyle: "italic",
-              marginTop: "0.5rem",
+              marginTop: "0.25rem",
               marginBottom: "1.5rem",
               color: theme.palette.text.secondary,
             }}
           >
             Buying solar and a battery together is usually better value as you
-            only need one inverter. To reflect this, we have included a saving
-            in this calculator.
+            only need one inverter. If you say you don't have either, we
+            include a saving in the battery cost in this calculator.
           </Typography>
 
           {/* Transport section */}
@@ -1318,7 +1318,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                         IconComponent={chevronDown}
                         labelId="number-of-vehicles-label"
                         inputProps={{ id: "numberOfVehicles-input" }}
-                        MenuProps={{ disableScrollLock: true }}
+                        MenuProps={{ disableScrollLock: true, disablePortal: true }}
                       >
                         {formText.options.vehicle.amount.map(
                           (option: OptionNumber) => (
