@@ -100,7 +100,7 @@ export const defaultSavingsData: Savings = {
   },
   upfrontCost: {
     solar: 7910,
-    battery: 10607.91,
+    battery: 7939.23,
     cooktop: 2000,
     waterHeating: 3500,
     spaceHeating: 0,

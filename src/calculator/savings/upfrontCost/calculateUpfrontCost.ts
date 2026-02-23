@@ -51,9 +51,17 @@ function getSpaceHeatingUpfrontCost(
 }
 
 export function calculateUpfrontCost(current: Household, electrified: Household): UpfrontCost {
+  const installSolar = shouldInstall(current.solar!);
+  const installBattery = shouldInstall(current.battery!);
+
+  let batteryCost = getBatteryUpfrontCost(current.battery!);
+  if (installSolar && installBattery) {
+    batteryCost = Math.max(0, batteryCost - BATTERY_COST_INTERCEPT);
+  }
+
   return {
     solar: getSolarUpfrontCost(current.solar!, current.location!),
-    battery: getBatteryUpfrontCost(current.battery!),
+    battery: batteryCost,
     cooktop: getCooktopUpfrontCost(current.cooktop!, electrified.cooktop!),
     waterHeating: getWaterHeatingUpfrontCost(current.waterHeating!, electrified.waterHeating!),
     spaceHeating: getSpaceHeatingUpfrontCost(
