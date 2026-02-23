@@ -83,24 +83,24 @@ export const defaultSavingsData: Savings = {
   opex: {
     perWeek: {
       before: 48.33,
-      after: -0.19,
-      difference: -48.52,
+      after: 0.77,
+      difference: -47.56,
     },
     perYear: {
       before: 2521.63,
-      after: -10.13,
-      difference: -2531.76,
+      after: 39.99,
+      difference: -2481.64,
     },
     overLifetime: {
       before: 45992.95,
-      after: -3447.14,
-      difference: -49440.09,
+      after: -2194.03,
+      difference: -48186.98,
     },
     operationalLifetime: 15,
   },
   upfrontCost: {
     solar: 7910,
-    battery: 14300,
+    battery: 10607.91,
     cooktop: 2000,
     waterHeating: 3500,
     spaceHeating: 0,
@@ -143,6 +143,6 @@ export const defaultSavingsData: Savings = {
       lpg: 0,
       electricity: 465.0,
     },
-    revenueFromSolarExport: 475.1337852719999,
+    revenueFromSolarExport: 425.009358972,
   },
 };

@@ -1,4 +1,4 @@
-import { BATTERY_COST_PER_KWH } from '../../constants/battery';
+import { BATTERY_COST_INTERCEPT, BATTERY_COST_PER_KWH } from '../../constants/battery';
 import { COOKTOP_UPFRONT_COST } from '../../constants/machines/cooktop';
 import {
   N_HEAT_PUMPS_NEEDED_PER_LOCATION,
@@ -18,7 +18,7 @@ function getSolarUpfrontCost(current: Solar, location: LocationEnum): number {
 
 function getBatteryUpfrontCost(current: Battery): number {
   if (shouldInstall(current)) {
-    return Math.round(BATTERY_COST_PER_KWH * (current.capacity ?? 0) * 100) / 100;
+    return Math.round((BATTERY_COST_INTERCEPT + BATTERY_COST_PER_KWH * (current.capacity ?? 0)) * 100) / 100;
   }
   return 0;
 }

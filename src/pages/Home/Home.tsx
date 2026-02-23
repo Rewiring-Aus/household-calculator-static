@@ -116,8 +116,12 @@ const Home: React.FC = () => {
 
   // -----------------------------------------------------------
   // Drawer
-  const { drawerOpen, toggleDrawer, setScrollPosition } =
+  const { drawerOpen, toggleDrawer, scrollPosition, setScrollPosition } =
     useDrawer();
+
+  useEffect(() => {
+    window.scrollTo(0, scrollPosition);
+  }, [scrollPosition]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {

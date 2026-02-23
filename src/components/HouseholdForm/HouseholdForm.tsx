@@ -401,6 +401,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "location",
                       }}
+                      MenuProps={{ disableScrollLock: true }}
                     >
                       {formText.options.location.map(
                         (option: Option<LocationEnum>) => (
@@ -442,6 +443,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "occupancy",
                       }}
+                      MenuProps={{ disableScrollLock: true }}
                     >
                       {formText.options.occupancy.map((option: OptionNumber) => (
                         <HouseMenuItem
@@ -552,6 +554,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "spaceHeating-input",
                       }}
+                      MenuProps={{ disableScrollLock: true }}
                       sx={{
                         "& #spaceHeating": {
                           backgroundColor:
@@ -644,6 +647,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "waterHeating-input",
                       }}
+                      MenuProps={{ disableScrollLock: true }}
                       sx={{
                         "& #waterHeating": {
                           backgroundColor:
@@ -734,6 +738,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                       inputProps={{
                         id: "cooktop-input",
                       }}
+                      MenuProps={{ disableScrollLock: true }}
                       sx={{
                         "& #cooktop": {
                           backgroundColor:
@@ -1299,6 +1304,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                         IconComponent={chevronDown}
                         labelId="number-of-vehicles-label"
                         inputProps={{ id: "numberOfVehicles-input" }}
+                        MenuProps={{ disableScrollLock: true }}
                       >
                         {formText.options.vehicle.amount.map(
                           (option: OptionNumber) => (

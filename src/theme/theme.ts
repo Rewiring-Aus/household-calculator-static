@@ -151,23 +151,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiSelect: {
-      defaultProps: {
-        MenuProps: {
-          disableScrollLock: true,
-        },
-      },
-    },
-    MuiMenu: {
-      defaultProps: {
-        disableScrollLock: true,
-      },
-    },
-    MuiModal: {
-      defaultProps: {
-        disableScrollLock: true,
-      },
-    },
     MuiButton: {
       styleOverrides: {
         root: {
