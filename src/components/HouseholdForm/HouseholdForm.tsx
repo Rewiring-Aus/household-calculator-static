@@ -1266,7 +1266,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
           </FormSectionFlex>
 
           <Typography
-            variant="body2"
+            variant="caption"
             sx={{
               fontStyle: "italic",
               marginTop: "0.25rem",
