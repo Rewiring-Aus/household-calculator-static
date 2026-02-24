@@ -30,8 +30,11 @@ const EmailReportForm: React.FC<EmailReportFormProps> = ({ results, household })
 
   return (
     <Box component="form" onSubmit={handleSubmit}>
-      <Typography variant="h2" sx={{ mb: 1 }}>
+      <Typography variant="h2" sx={{ mb: 0.5 }}>
         Email me my report
+      </Typography>
+      <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+        Includes your savings summary and personalised next steps.
       </Typography>
       {formState === 'success' ? (
         <Typography variant="body1">Report sent! Check your inbox.</Typography>
@@ -46,7 +49,7 @@ const EmailReportForm: React.FC<EmailReportFormProps> = ({ results, household })
             fullWidth
             disabled={formState === 'loading'}
             size="small"
-            sx={{ mb: 1 }}
+            sx={{ mb: 1, '& .MuiInputBase-root': { backgroundColor: 'white' } }}
           />
           <Button
             type="submit"

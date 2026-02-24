@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import MailchimpForm from "../MailChimpForm/MailChimpForm";
 
 // ----------------- Styles & Material UI -------------------
 import {
@@ -8,8 +7,6 @@ import {
   Typography,
   useTheme,
   Link,
-  Grid,
-  useMediaQuery,
 } from "@mui/material";
 import { FDivider } from "src/shared/styles/FDivider";
 
@@ -22,7 +19,6 @@ import OpenIcon from "src/assets/icons/open-outline.svg?react";
 import { Household, Savings, UpfrontCost } from "src/calculator/types";
 import EmailReportForm from "src/components/EmailReportForm/EmailReportForm";
 import { electricVehicleURL } from "src/shared/links";
-import { recommendationActions } from "./data/RecommendationActions";
 
 import {
   calcPercentage,
@@ -30,7 +26,7 @@ import {
   formatSavingsNZD,
   roundToSigFigs,
 } from "src/shared/utils/formatters";
-import { NextStepButton, SavingsFrameBox } from "./HouseholdSavings.styles";
+import { SavingsFrameBox } from "./HouseholdSavings.styles";
 
 export interface SavingsProps {
   results: Savings;
@@ -80,7 +76,6 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
   isMobile = false,
 }) => {
   const theme = useTheme();
-  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
   const [upfrontCostTotal, setUpfrontCostTotal] = useState("0");
   const vehicleCostStr = getVehicleCostStr(numEVsToBuy);
@@ -96,16 +91,6 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
     const totalString = `$${total.toLocaleString("en-NZ")}`;
     setUpfrontCostTotal(totalString);
   }, [results, loadingData]);
-
-  // --------------------  Next Steps --------------------
-  const recommendationKey = results?.recommendation?.action;
-  const recommendationURL = results?.recommendation?.url || "";
-  const allGuidesURL =
-    "https://www.rewiringaustralia.org/research-and-resources";
-  const { getDescription, buttonText, imageComponent } = recommendationKey
-    ? recommendationActions[recommendationKey]
-    : { getDescription: () => "", buttonText: "", imageComponent: "" };
-  const description = getDescription(appliances);
 
   return (
     <Box
@@ -257,10 +242,6 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
           )}
         </ResultBox>
         <FDivider />
-        <Box sx={{ marginTop: "1.2rem", marginBottom: "1.2rem" }}>
-          <EmailReportForm results={results} household={household} />
-        </Box>
-        <FDivider />
         <Box sx={{ marginTop: "1.2rem", marginBottom: "0.4rem" }}>
           <Typography variant="body1">
             <Link component={RouterLink} to="/methodology">
@@ -271,176 +252,15 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
       </SavingsFrameBox>
 
       <SavingsFrameBox
-        className="NextSteps"
+        className="EmailReport"
         sx={{
           backgroundColor: theme.palette.secondary.main,
           color: theme.palette.secondary.contrastText,
         }}
       >
-        <Grid
-          container
-          sx={{
-            margin: "0.4rem 0",
-            padding: "0",
-            boxSizing: "border-box",
-          }}
-        >
-          <Grid
-            item
-            xs={12}
-            md={8}
-            sx={{
-              padding: "0",
-              boxSizing: "border-box",
-              paddingRight: "0",
-              [theme.breakpoints.up("md")]: {
-                paddingRight: "1rem",
-              },
-            }}
-          >
-            <Box
-              className="TopBox"
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "flex-start",
-                padding: "0",
-                boxSizing: "border-box",
-              }}
-            >
-              <Box
-                className="TextBox"
-                sx={{
-                  flex: 1,
-                  padding: "0",
-                  boxSizing: "border-box",
-                  paddingRight: "1rem",
-                }}
-              >
-                <Typography
-                  variant="h2"
-                  sx={{
-                    color: theme.palette.secondary.contrastText,
-                  }}
-                  aria-label="Next steps"
-                >
-                  Next steps
-                </Typography>
-
-                <Typography variant="subtitle2">{description}</Typography>
-              </Box>
-
-              {!isMdUp && (
-                <Box
-                  className="ImageBox"
-                  sx={{
-                    flexShrink: 0,
-                    marginLeft: { md: "1rem" },
-                    marginTop: { xs: "1rem", md: 0 },
-                    margin: "1rem 0",
-                  }}
-                >
-                  {imageComponent}
-                </Box>
-              )}
-            </Box>
-          </Grid>
-
-          {isMdUp && (
-            <Grid
-              item
-              xs={12}
-              md={4}
-              sx={{
-                padding: "0",
-                boxSizing: "border-box",
-              }}
-            >
-              <Box
-                className="ImageBox"
-                sx={{
-                  margin: "1rem 0",
-                  display: "just",
-                  justifyContent: "end",
-                }}
-              >
-                {imageComponent}
-              </Box>
-            </Grid>
-          )}
-        </Grid>
-        <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              lg={8}
-              sx={{
-                display: "flex",
-                gap: "1rem",
-                marginBottom: "1rem",
-                justifyContent: "space-between",
-              }}
-            >
-              {buttonText && (
-                <NextStepButton
-                  variant="contained"
-                  color="info"
-                  theme={theme}
-                  id="next-step-button-action"
-                  className={buttonText ? "main-action" : "secondary-action"}
-                  onClick={() =>
-                    window.open(
-                      recommendationURL,
-                      "_blank",
-                      "noopener,noreferrer",
-                    )
-                  }
-                >
-                    {buttonText}
-                  <OpenIcon
-                    style={{
-                      marginLeft: "0.3rem",
-                      maxWidth: "15px",
-                      maxHeight: "15px",
-                    }}
-                  />
-                </NextStepButton>
-              )}
-              <NextStepButton
-                variant="contained"
-                color={buttonText ? "secondary": "info"}
-                theme={theme}
-                id="next-step-button-all-guides"
-                className={buttonText ? "secondary-action": "main-action"}
-                onClick={() =>
-                  window.open(allGuidesURL, "_blank", "noopener,noreferrer")
-                }
-              >
-                  See all guides
-                <OpenIcon
-                  style={{
-                    marginLeft: "0.3rem",
-                    maxWidth: "15px",
-                    maxHeight: "15px",
-                  }}
-                />
-              </NextStepButton>
-            </Grid>
-
-        <Typography variant="body1">
-          Sign me up to the mailing list for updates & toolkits for
-          electrification:
-        </Typography>
-
-        <Box
-          sx={{
-            margin: "0.6rem 0 1.5rem 0",
-          }}
-        >
-          <MailchimpForm theme={theme} />
-        </Box>
+        <EmailReportForm results={results} household={household} />
       </SavingsFrameBox>
+
     </Box>
   );
 };
