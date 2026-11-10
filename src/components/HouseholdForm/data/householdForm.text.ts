@@ -4,6 +4,8 @@ import {
   SpaceHeatingEnum,
   WaterHeatingEnum,
   CooktopEnum,
+  DwellingEnum,
+  VehicleClassEnum,
   VehicleFuelTypeEnum,
 } from "src/calculator/types";
 
@@ -28,6 +30,17 @@ export const locationMapping: Record<LocationEnum, string> = {
   [LocationEnum.Tasmania]: "Tasmania",
 };
 
+
+export const dwellingMapping: Record<DwellingEnum, string> = {
+  [DwellingEnum.House]: "House or townhouse",
+  [DwellingEnum.Apartment]: "Apartment or unit",
+};
+
+export const vehicleClassMapping: Record<VehicleClassEnum, string> = {
+  [VehicleClassEnum.Hatchback]: "Small car / hatchback",
+  [VehicleClassEnum.Sedan]: "Sedan",
+  [VehicleClassEnum.Suv]: "SUV",
+};
 
 export const spaceHeatingMapping: Record<SpaceHeatingEnum, string> = {
   [SpaceHeatingEnum.ElectricHeatPump]: "Reverse cycle a/c",
@@ -110,6 +123,10 @@ export const occupancyOptions = Array.from(Array(5).keys()).map(
   }),
 ) as OptionNumber[];
 
+export const dwellingOptions = Object.entries(dwellingMapping).map(
+  ([key, value]) => ({ value: key as DwellingEnum, text: value }),
+) as Option<DwellingEnum>[];
+
 export const spaceHeatingOptions = Object.entries(spaceHeatingMapping).map(
   ([key, value]) => ({
     value: key as SpaceHeatingEnum,
@@ -140,6 +157,10 @@ export const vehicleOptions: VehicleOptions = {
     value: key as VehicleFuelTypeEnum,
     text: value,
   })) as Option<VehicleFuelTypeEnum>[],
+  classOptions: Object.entries(vehicleClassMapping).map(([key, value]) => ({
+    value: key as VehicleClassEnum,
+    text: value,
+  })) as Option<VehicleClassEnum>[],
   usageOptions: [
     { type: "Low", value: 50, unit: "< 100 km/wk" },
     { type: "Medium", value: 255, unit: "100-300 km/wk" },
@@ -186,6 +207,8 @@ const tooltipText: Record<string, string> = {
     "If you have a home battery, select Yes. If you don’t have a battery yet, select whether you would like to calculate your savings based on getting one. We currently only include battery calculations if you include solar.",
   batteryCapacity:
     "The total size of your home battery system. Aim to cover at least 1/3, ideally 2/3, of your energy usage taking into account when you mostly use energy. An average Australian household uses 16kWh of energy a day with 70% at night (so a 11kWh battery would cover most but not all needs).",
+  dwelling:
+    "Apartments use about 21% less energy than houses for heating, cooling, hot water and appliances.",
   vehicleNumber:
     "Select the number of vehicles that you use reasonably regularly.",
 };
@@ -199,6 +222,7 @@ export default tooltipText;
 
 export type LocationOptionType = typeof locationOptions;
 export type OccupancyOptionType = typeof occupancyOptions;
+export type DwellingOptionType = typeof dwellingOptions;
 export type SpaceHeatingOptionType = typeof spaceHeatingOptions;
 export type WaterHeatingOptionType = typeof waterHeatingOptions;
 export type CooktopOptionType = typeof cooktopOptions;
@@ -211,6 +235,7 @@ export interface FormText {
   options: {
     location: LocationOptionType;
     occupancy: OccupancyOptionType;
+    dwelling: DwellingOptionType;
     spaceHeating: SpaceHeatingOptionType;
     waterHeating: WaterHeatingOptionType;
     cooktop: CooktopOptionType;
@@ -226,6 +251,7 @@ export const formText: FormText = {
   options: {
     location: locationOptions,
     occupancy: occupancyOptions,
+    dwelling: dwellingOptions,
     spaceHeating: spaceHeatingOptions,
     waterHeating: waterHeatingOptions,
     cooktop: cooktopOptions,

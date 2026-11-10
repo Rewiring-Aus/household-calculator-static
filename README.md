@@ -8,7 +8,7 @@ A standalone, frontend-only version of the [Rewiring Australia Household Calcula
 
 ## How it works
 
-Users enter their household details (location, appliances, vehicles, solar/battery) and instantly see estimated savings from electrifying — covering energy bills, emissions, and upgrade costs. The calculation engine is a TypeScript port of the [Python household model](https://github.com/Rewiring-Aus/household-model).
+Users enter their household details (location, appliances, vehicles, solar/battery) and instantly see estimated savings from electrifying — covering energy bills, emissions, and upgrade costs. The calculation engine uses the assumptions and maths of Rewiring Australia's [Energy Savings 2026 model](https://github.com/Rewiring-Aus/energy-savings-2026-model), applied to the user's own mix of appliances. See [METHODOLOGY.md](METHODOLOGY.md).
 
 As the user changes form selections, their state is automatically encoded into the URL as a `?h=` query parameter (base64-encoded JSON). This makes every calculator state shareable and bookmarkable — anyone with the link will see the same selections.
 
@@ -22,6 +22,24 @@ npm run dev       # Vite dev server at http://localhost:5173
 npm run build     # Production build to dist/
 npx vitest run    # Run tests
 ```
+
+### Updating the model numbers
+
+The calculator's prices, energy use, emissions factors, capital costs and solar/battery
+parameters are generated from the input CSVs of the
+[Energy Savings 2026 model](https://github.com/Rewiring-Aus/energy-savings-2026-model).
+With that repo checked out alongside this one:
+
+```bash
+node scripts/build-model-data.mjs                 # or pass the path to its data/ folder
+Rscript scripts/parity/r_reference.R              # refresh the R reference figures (needs R + tidyverse)
+npx vitest run                                    # parity.test.ts checks the calculator against R
+```
+
+Commit the regenerated `src/calculator/constants/model2026.generated.ts` and
+`src/calculator/__tests__/fixtures/r_reference.csv`. If the R model's *logic* changes (not
+just its numbers), port the change into `src/calculator/engine/evaluateHousehold.ts`; the
+parity test will fail until you do.
 
 ### Running with Cloudflare Pages Functions locally (email + API)
 
@@ -163,11 +181,16 @@ Add this as a custom HTML embed:
 ## Project structure
 
 ```
+scripts/
+  build-model-data.mjs  # Regenerates calculator/constants/model2026.generated.ts
+  parity/r_reference.R  # Reference figures from the R model for the parity test
+
 src/
-  calculator/           # TypeScript port of Python calculation engine
-    constants/          # Energy data, fuel costs, emissions factors
+  calculator/           # Calculation engine (Energy Savings 2026 model)
+    constants/          # model2026.generated.ts (from the model's CSVs) + typed lookups
+    engine/             # evaluateHousehold: loads, solar/battery, tariff, bill, emissions
     models/             # Electrification logic, recommendations
-    savings/            # Emissions, opex, upfront cost calculations
+    savings/            # Upfront cost calculations
     types.ts            # All enums and interfaces
     calculateSavings.ts # Main entry point
   components/

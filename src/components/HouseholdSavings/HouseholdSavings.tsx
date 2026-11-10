@@ -149,6 +149,19 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
             </span>{" "}
             saved over 15 year product lifetime
           </Typography>
+          {results?.tariffSwitch && results.tariffSwitch.perYear >= 1 && (
+            <Typography
+              variant="body2"
+              sx={{ marginTop: "0.6rem", color: theme.palette.text.secondary }}
+            >
+              Includes{" "}
+              <span style={{ fontWeight: "600" }}>
+                {formatSavingsNZD(-results.tariffSwitch.perYear, 0)} per year
+              </span>{" "}
+              from switching to a time-of-use electricity plan, which your
+              solar and battery let you make the most of.
+            </Typography>
+          )}
         </ResultBox>
 
         <FDivider />

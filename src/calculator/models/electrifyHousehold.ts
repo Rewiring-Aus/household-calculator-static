@@ -13,6 +13,7 @@ export function electrifyHousehold(current: Household): Household {
   return {
     location: current.location,
     occupancy: current.occupancy,
+    dwelling: current.dwelling,
     spaceHeating: electrifySpaceHeating(current.spaceHeating!),
     waterHeating: electrifyWaterHeating(current.waterHeating!),
     cooktop: electrifyCooktop(current.cooktop!),
@@ -63,6 +64,7 @@ export function electrifyVehicle(current: Vehicle): Vehicle {
   if (current.switchToEV) {
     return {
       fuelType: VehicleFuelTypeEnum.Electric,
+      vehicleClass: current.vehicleClass,
       kmsPerWeek: current.kmsPerWeek,
       switchToEV: undefined,
     };

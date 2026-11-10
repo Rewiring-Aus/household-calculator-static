@@ -17,7 +17,7 @@ const OpexBreakdown: React.FC<OpexBreakdownProps> = ({ savingsData }) => {
     borderRadius: "4px",
     marginBottom: "1rem",
     display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
+    gridTemplateColumns: "repeat(5, 1fr)",
     gap: "1rem",
     width: "100%",
     boxSizing: "border-box",
@@ -68,6 +68,7 @@ const OpexBreakdown: React.FC<OpexBreakdownProps> = ({ savingsData }) => {
             <Typography>Fuel cost</Typography>
             <Typography>Fixed cost</Typography>
             <Typography>Solar export revenue</Typography>
+            <Typography>Car servicing</Typography>
             <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
               ${Math.round((savingsData?.opexBefore?.gridVolumeCosts || 0) / 100) * 100}
             </Typography>
@@ -79,6 +80,9 @@ const OpexBreakdown: React.FC<OpexBreakdownProps> = ({ savingsData }) => {
             </Typography>
             <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
               ${Math.round((savingsData?.opexBefore?.revenueFromSolarExport || 0) / 100) * 100}
+            </Typography>
+            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
+              ${Math.round((savingsData?.opexBefore?.vehicleMaintenanceCosts || 0) / 100) * 100}
             </Typography>
             <Typography />
             <Typography>
@@ -109,6 +113,7 @@ const OpexBreakdown: React.FC<OpexBreakdownProps> = ({ savingsData }) => {
             <Typography>Fuel cost</Typography>
             <Typography>Fixed cost</Typography>
             <Typography>Solar export revenue</Typography>
+            <Typography>Car servicing</Typography>
             <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
               ${Math.round((savingsData?.opexAfter?.gridVolumeCosts || 0) / 100) * 100}
             </Typography>
@@ -120,6 +125,9 @@ const OpexBreakdown: React.FC<OpexBreakdownProps> = ({ savingsData }) => {
             </Typography>
             <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
               ${Math.round((savingsData?.opexAfter?.revenueFromSolarExport || 0) / 100) * 100}
+            </Typography>
+            <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
+              ${Math.round((savingsData?.opexAfter?.vehicleMaintenanceCosts || 0) / 100) * 100}
             </Typography>
             <Typography />
             <Typography>

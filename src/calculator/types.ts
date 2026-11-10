@@ -49,6 +49,19 @@ export const VehicleFuelTypeEnum = {
 } as const;
 export type VehicleFuelTypeEnum = (typeof VehicleFuelTypeEnum)[keyof typeof VehicleFuelTypeEnum];
 
+export const VehicleClassEnum = {
+  Hatchback: 'HATCHBACK',
+  Sedan: 'SEDAN',
+  Suv: 'SUV',
+} as const;
+export type VehicleClassEnum = (typeof VehicleClassEnum)[keyof typeof VehicleClassEnum];
+
+export const DwellingEnum = {
+  House: 'HOUSE',
+  Apartment: 'APARTMENT',
+} as const;
+export type DwellingEnum = (typeof DwellingEnum)[keyof typeof DwellingEnum];
+
 export const FuelTypeEnum = {
   Electricity: 'electricity',
   NaturalGas: 'natural_gas',
@@ -84,6 +97,8 @@ export type RecommendationActionEnum = (typeof RecommendationActionEnum)[keyof t
 
 export interface Vehicle {
   fuelType: VehicleFuelTypeEnum;
+  /** Defaults to SUV when missing (e.g. links saved before classes existed). */
+  vehicleClass?: VehicleClassEnum;
   kmsPerWeek?: number;
   switchToEV?: boolean;
 }
@@ -103,6 +118,8 @@ export interface Battery {
 export interface Household {
   location?: LocationEnum;
   occupancy?: number;
+  /** Defaults to a house when missing. */
+  dwelling?: DwellingEnum;
   spaceHeating?: SpaceHeatingEnum;
   waterHeating?: WaterHeatingEnum;
   cooktop?: CooktopEnum;
@@ -171,11 +188,27 @@ export interface OpexWeekly {
   fixedCosts?: number;
   fixedCostsByFuelType?: OpexWeeklyFixedCostsByFuelType;
   revenueFromSolarExport?: number;
+  /** Servicing, tyres and consumables for the household's vehicles. */
+  vehicleMaintenanceCosts?: number;
+}
+
+/**
+ * Running-cost saving that comes from moving the electrified home from a flat
+ * tariff onto time-of-use, which it can only make use of once it has solar, a
+ * battery and no gas appliances left. Already included in `opex`; reported
+ * separately so the UI can call it out. Positive = saving.
+ */
+export interface TariffSwitch {
+  tariff: 'TIME_OF_USE';
+  perWeek: number;
+  perYear: number;
+  overLifetime: number;
 }
 
 export interface Savings {
   emissions?: Emissions;
   opex?: Opex;
+  tariffSwitch?: TariffSwitch;
   upfrontCost?: UpfrontCost;
   recommendation?: Recommendation;
   opexBefore?: OpexWeekly;

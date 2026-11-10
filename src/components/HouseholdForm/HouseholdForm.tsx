@@ -23,10 +23,12 @@ import { FDivider } from "src/shared/styles/FDivider";
 // ----------------- Models & Interfaces -------------------
 import {
   CooktopEnum,
+  DwellingEnum,
   Household,
   LocationEnum,
   SpaceHeatingEnum,
   Vehicle,
+  VehicleClassEnum,
   VehicleFuelTypeEnum,
   WaterHeatingEnum,
 } from "src/calculator/types";
@@ -71,6 +73,24 @@ import { HouseSwitch } from "./components/HouseSwitch";
 import HouseMenuItem from "./components/HouseMenuItem";
 import { defaultFormState } from "src/assets/data/householdDefaults";
 
+// A saved household holds km/week; the form holds a usage band. Map back to the
+// nearest band so shared links restore each car's usage and size.
+function toVehicleObjects(vehicles: Vehicle[]): VehicleObject[] {
+  const bands = formText.options.vehicle.usageOptions;
+  return vehicles.map((v, i) => ({
+    id: i + 1,
+    fuelType: v.fuelType,
+    vehicleClass: v.vehicleClass ?? VehicleClassEnum.Suv,
+    usageType:
+      v.kmsPerWeek == null
+        ? ("Medium" as UsageType)
+        : bands.reduce((best, b) =>
+            Math.abs(b.value - v.kmsPerWeek!) < Math.abs(best.value - v.kmsPerWeek!) ? b : best,
+          ).type,
+    switchToEV: v.switchToEV ?? false,
+  }));
+}
+
 interface HouseholdFormProps {
   householdData: Household;
   updateHouseholdData: (data: Household) => void;
@@ -93,12 +113,15 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
     defaultValues: {
       location: householdData?.location ?? defaultFormData.location,
       occupancy: householdData?.occupancy ?? defaultFormData.occupancy,
+      dwelling: householdData?.dwelling ?? defaultFormData.dwelling,
       spaceHeating: householdData?.spaceHeating ?? defaultFormData.spaceHeating,
       waterHeating: householdData?.waterHeating ?? defaultFormData.waterHeating,
       cooktop: householdData?.cooktop ?? defaultFormData.cooktop,
       numberOfVehicles:
         householdData?.vehicles?.length ?? defaultFormData.vehicleObjs.length,
-      vehicleObjs: householdData?.vehicles ?? defaultFormData.vehicleObjs,
+      vehicleObjs: householdData?.vehicles
+        ? toVehicleObjects(householdData.vehicles)
+        : defaultFormData.vehicleObjs,
       solar: {
         hasSolar: Boolean(
           householdData?.solar?.hasSolar ?? defaultFormData.solar.hasSolar,
@@ -202,6 +225,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
         const newVehicle: VehicleObject = {
           id: i + 1, // as number,
           fuelType: VehicleFuelTypeEnum.Petrol, // 'PETROL'
+          vehicleClass: VehicleClassEnum.Suv,
           usageType: "Medium" as UsageType,
           switchToEV: true,
         };
@@ -272,6 +296,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
     const householdDataOut: Household = {
       location: formValue.location ?? defaultFormState.location,
       occupancy: formValue.occupancy ?? defaultFormState.occupancy,
+      dwelling: formValue.dwelling ?? DwellingEnum.House,
       spaceHeating: formValue.spaceHeating ?? defaultFormState.spaceHeating,
       waterHeating: formValue.waterHeating ?? defaultFormState.waterHeating,
       cooktop: formValue.cooktop ?? defaultFormState.cooktop,
@@ -280,6 +305,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
         .map((vehicle: VehicleObject) => {
           const vehicleOut: Vehicle = {
             fuelType: vehicle.fuelType,
+            vehicleClass: vehicle.vehicleClass ?? VehicleClassEnum.Suv,
             kmsPerWeek:
               formText.options.vehicle.usageOptions.find(
                 (option: UsageOption) => option.type === vehicle.usageType,
@@ -457,6 +483,40 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                 {methods.formState.errors.occupancy && (
                   <FormHelperText>This field is required</FormHelperText>
                 )}
+              </FormControl>
+
+              <FormControl className="fullFormControl">
+                <LabelBox>
+                  <FormLabel className="mainLabels" htmlFor="dwelling">
+                    Type of home
+                  </FormLabel>
+                  <HouseholdTooltip title={tooltipText.dwelling} placement="top">
+                    <img src={questionIcon} className="tooltip-logo" alt="logo" />
+                  </HouseholdTooltip>
+                </LabelBox>
+                <Controller
+                  name="dwelling"
+                  control={control}
+                  render={({ field }) => (
+                    <HouseSelect
+                      {...field}
+                      IconComponent={chevronDown}
+                      inputProps={{ id: "dwelling" }}
+                      MenuProps={{ disableScrollLock: true, disablePortal: true }}
+                    >
+                      {formText.options.dwelling.map((option: Option<DwellingEnum>) => (
+                        <HouseMenuItem
+                          theme={theme}
+                          key={option.value}
+                          value={option.value}
+                          selected={field.value === option.value}
+                        >
+                          {option.text}
+                        </HouseMenuItem>
+                      ))}
+                    </HouseSelect>
+                  )}
+                />
               </FormControl>
             </FormSectionFlex>
           </FormBox>
@@ -1362,6 +1422,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                     {...vehicle}
                     onDelete={() => handleVehicleDelete(index)}
                     fuelTypeOptions={formText.options.vehicle.fuelTypeOptions}
+                    classOptions={formText.options.vehicle.classOptions}
                     usageOptions={formText.options.vehicle.usageOptions}
                     defaultType={"Medium"}
                   />
