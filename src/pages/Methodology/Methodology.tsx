@@ -272,7 +272,7 @@ const Methodology: React.FC = () => {
               secondhand EVs available in the market now. Also, when buying a
               new car, you would usually take into account the purchase price
               (what we’ve shown) minus the resale value. So you wouldn’t
-              normally be losing $30k-$70k outright for every EV you buy.
+              normally be losing $20k-$70k outright for every EV you buy.
             </Typography>
             <Typography variant="body2">
               Solar panels are priced per kW for your state (from $533/kW in
