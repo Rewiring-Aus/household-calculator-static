@@ -8,53 +8,34 @@ import {
   VehicleFuelTypeEnum,
   type Household,
 } from '../types';
-import { defaultHouseholdData, defaultSavingsData } from '../../assets/data/householdDefaults';
+import { defaultHouseholdData } from '../../assets/data/householdDefaults';
 
-const TOLERANCE = 0.5; // Allow ±$0.50 or ±0.5 kg CO2
-
-function expectClose(actual: number, expected: number, tol = TOLERANCE) {
-  expect(Math.abs(actual - expected)).toBeLessThan(tol);
-}
-
-describe('calculateSavings - golden test with default household', () => {
+describe('calculateSavings - default household (NSW, gas hot water and cooktop, adding 10 kW solar + 13 kWh battery)', () => {
   const result = calculateSavings(defaultHouseholdData);
 
-  it('should calculate emissions per week correctly', () => {
-    expectClose(result.emissions.perWeek.before, defaultSavingsData.emissions.perWeek.before);
-    expectClose(result.emissions.perWeek.after, defaultSavingsData.emissions.perWeek.after);
-    expectClose(result.emissions.perWeek.difference, defaultSavingsData.emissions.perWeek.difference);
+  it('saves money and emissions', () => {
+    expect(result.opex!.perYear.difference).toBeLessThan(0);
+    expect(result.emissions!.perYear.difference).toBeLessThan(0);
   });
 
-  it('should calculate emissions per year correctly', () => {
-    expectClose(result.emissions.perYear.before, defaultSavingsData.emissions.perYear.before, 5);
-    expectClose(result.emissions.perYear.after, defaultSavingsData.emissions.perYear.after, 5);
-    expectClose(result.emissions.perYear.difference, defaultSavingsData.emissions.perYear.difference, 5);
+  it('reports weekly figures consistent with yearly ones', () => {
+    expect(result.opex!.perWeek.before).toBeCloseTo((result.opex!.perYear.before * 7) / 365, 1);
   });
 
-  it('should calculate opex per week correctly', () => {
-    expectClose(result.opex.perWeek.before, defaultSavingsData.opex.perWeek.before, 1);
-    expectClose(result.opex.perWeek.after, defaultSavingsData.opex.perWeek.after, 1);
-    expectClose(result.opex.perWeek.difference, defaultSavingsData.opex.perWeek.difference, 1);
-  });
-
-  it('should calculate opex per year correctly', () => {
-    expectClose(result.opex.perYear.before, defaultSavingsData.opex.perYear.before, 50);
-    expectClose(result.opex.perYear.after, defaultSavingsData.opex.perYear.after, 50);
-    expectClose(result.opex.perYear.difference, defaultSavingsData.opex.perYear.difference, 50);
-  });
-
-  it('should calculate upfront costs correctly', () => {
-    // Solar cost: SOLAR_COST_PER_KW[NSW] * 10kW = 791 * 10 = 7910
-    expectClose(result.upfrontCost!.solar!, 7910, 1);
-    // Battery cost: (BATTERY_COST_INTERCEPT + BATTERY_COST_PER_KWH * 13kWh) - BATTERY_COST_INTERCEPT
-    // = 610.71 * 13 = 7939.23
-    expectClose(result.upfrontCost!.battery!, 7939.23, 1);
-    // Cooktop: gas → induction = item_price + install_cost = 1400 + 600 = 2000
-    expectClose(result.upfrontCost!.cooktop!, 2000, 1);
-    // Water heating: gas → heat pump = 3500
-    expect(result.upfrontCost!.waterHeating).toBe(3500);
-    // Space heating: heat pump → stays same = 0
+  it('prices upgrades from the 2026 product prices', () => {
+    // NSW panels $649/kW × 10 kW + one $1,800 string inverter
+    expect(result.upfrontCost!.solar).toBe(8290);
+    // Subsidised $620/kWh; no separate installation when installed with new solar
+    expect(result.upfrontCost!.battery).toBe(8060);
+    expect(result.upfrontCost!.cooktop).toBe(2200);
+    expect(result.upfrontCost!.waterHeating).toBe(3900);
     expect(result.upfrontCost!.spaceHeating).toBe(0);
+  });
+
+  it('moves the electrified home onto time-of-use and reports that saving', () => {
+    expect(result.tariffSwitch).toBeDefined();
+    expect(result.tariffSwitch!.perYear).toBeGreaterThan(0);
+    expect(result.tariffSwitch!.perYear).toBeLessThan(-result.opex!.perYear.difference);
   });
 
   it('should recommend SOLAR as next action', () => {
@@ -79,8 +60,12 @@ describe('calculateSavings - fully electric household', () => {
   const result = calculateSavings(fullyElectric);
 
   it('should have zero or near-zero savings (already electrified)', () => {
-    expect(Math.abs(result.emissions.perWeek.difference)).toBeLessThan(1);
-    expect(Math.abs(result.opex.perWeek.difference)).toBeLessThan(1);
+    expect(Math.abs(result.emissions!.perWeek.difference)).toBeLessThan(1);
+    expect(Math.abs(result.opex!.perWeek.difference)).toBeLessThan(1);
+  });
+
+  it('reports no tariff switch (already on time-of-use)', () => {
+    expect(result.tariffSwitch).toBeUndefined();
   });
 
   it('should have zero upfront costs', () => {

@@ -3,6 +3,8 @@ import {
   SpaceHeatingEnum,
   WaterHeatingEnum,
   CooktopEnum,
+  DwellingEnum,
+  VehicleClassEnum,
   VehicleFuelTypeEnum,
 } from "src/calculator/types";
 import { VehicleOptionType } from "./householdForm.text";
@@ -18,12 +20,14 @@ export interface UsageOption {
 export interface VehicleOptions {
   amount: OptionNumber[];
   fuelTypeOptions: Option<VehicleFuelTypeEnum>[];
+  classOptions: Option<VehicleClassEnum>[];
   usageOptions: UsageOption[]; // Use UsageOption interface here
 }
 
 export interface VehicleObject {
   id: number | string;
   fuelType: VehicleFuelTypeEnum;
+  vehicleClass: VehicleClassEnum;
   // usage: Usage
   usageType: UsageType;
   switchToEV: boolean;
@@ -32,6 +36,7 @@ export interface VehicleObject {
 export interface HouseholdFormState {
   location: LocationEnum;
   occupancy: number;
+  dwelling: DwellingEnum;
   spaceHeating: SpaceHeatingEnum;
   waterHeating: WaterHeatingEnum;
   cooktop: CooktopEnum;

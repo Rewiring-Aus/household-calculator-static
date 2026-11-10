@@ -137,59 +137,64 @@ const Methodology: React.FC = () => {
 
             <Typography variant="h3">Energy Consumption</Typography>
             <Typography variant="body2">
-              We derive average household energy use across different appliances
-              through the{" "}
+              The calculator uses the assumptions of Rewiring Australia's{" "}
+              <Link
+                href="https://github.com/Rewiring-Aus/energy-savings-2026-model"
+                target="_blank"
+              >
+                Energy Savings 2026 model
+              </Link>
+              . Average household energy use for each appliance, by state, comes
+              from the{" "}
               <Link
                 href="https://www.energyrating.gov.au/industry-information/publications/report-2021-residential-baseline-study-australia-and-new-zealand-2000-2040"
                 target="_blank"
               >
                 Australian and New Zealand Residential Baseline Study 2021
-              </Link>{" "}
-              (published November 2022). For house heating, energy use varies by
-              fuel type, with wood, diesel, and gas/LPG heaters using the most
-              energy, and heat pumps being the most efficient. Water and cooktop
-              energy use is also derived from standard efficiency values for
-              gas, electric, and heat pump systems. For household appliances
-              like lighting, laundry, and cooling, a static average daily
-              consumption is used. These energy use values are scaled by
-              regional differences in heating demand (e.g. Melbourne requires more
-              house heating than Cairns). They are also scaled by household
-              occupancy, using a logarithmic model to account for nonlinear,
-              diminishing increases in energy consumption as household size
-              increases.
-            </Typography>
-            <Typography variant="body2">
-              Average vehicle energy use is calculated from the{" "}
-              <Link
-                href="https://www.abs.gov.au/statistics/industry/tourism-and-transport/survey-motor-vehicle-use-australia/12-months-ended-30-june-2018#data-download"
-                target="_blank"
-              >
-                Australian Bureau of Statistics (ABS) Survey Motor Vehicle Survey
               </Link>
-              , using 2018 data to avoid COVID anomalies. We assume the average Australian driver drives 255 km per week, then scale this based on each vehicle's stated usage (kilometres driven per year).
-
+              . These are measured figures, so the efficiency gap between, say, a
+              gas heater and a heat pump is already built in. Lighting,
+              refrigeration, laundry, cooling and other appliances use the same
+              energy in every scenario. Energy use is scaled by the number of
+              occupants (using the AER residential consumption benchmarks), and
+              apartments use 21% less energy than houses.
             </Typography>
             <Typography variant="body2">
-              Solar energy generation is modeled based on panel size, location,
-              and degradation over 30 years (averaging 93.08% of nameplate
-              capacity performance), with regional variations in solar capacity.
-              Battery capacity is determined by size, degradation (averaging
-              85.22% of nameplate capacity over 15 year lifetime), and
-              round-trip efficiency (95%).
+              Vehicle energy use is the average efficiency of each vehicle size
+              (small car, sedan or SUV) multiplied by the distance you drive.
+              Petrol and diesel efficiency is calibrated to the ABS Survey of
+              Motor Vehicle Use fleet average of 11.1 L/100 km. We assume 15% of
+              EV charging happens at public fast chargers ($0.65/kWh); the rest
+              is charged at home. Hybrids are modelled as 70% petrol and 30%
+              electric, and plug-in hybrids as 60% petrol and 40% electric.
+            </Typography>
+            <Typography variant="body2">
+              Solar generation is based on panel size and your state's average
+              capacity factor, with more output in summer than winter. Each
+              appliance can use a different share of its energy from solar (for
+              example, a heat pump hot water system on a timer can run mostly on
+              solar, while overnight heating cannot), and at least 10% of every
+              load is always bought from the grid. Batteries are modelled across
+              a typical day in each season: stored solar first covers your
+              evening use, then charges your EV, and any surplus is exported. We
+              assume 90% of the battery's capacity is usable, 90% round-trip
+              efficiency, and gradual capacity loss over time.
             </Typography>
 
             <Typography variant="h3">Emissions Reduction</Typography>
             <Typography variant="body2">
-              To calculate emissions, we take the energy calculations from each
-              machine and multiply these by their emissions factors. The
-              emissions factors are taken from Australia's {" "}
+              To calculate emissions, we multiply the energy each appliance and
+              vehicle uses by its emissions factor, from Australia's{" "}
               <Link
                 href="https://greenhouseaccounts.climatechange.gov.au/"
                 target="_blank"
               >
                 National Greenhouse Accounts
               </Link>
-              .{" "}
+              . Grid electricity uses your state's current factor; solar you use
+              directly or through your battery is zero-emission. We don't assume
+              the grid gets cleaner over time, so the emissions of electric
+              options are likely overstated.
             </Typography>
             <Typography variant="body2">
               To calculate emissions savings, we simply take the difference
@@ -200,30 +205,28 @@ const Methodology: React.FC = () => {
               Operating Costs (Energy & Fuel Bill)
             </Typography>
             <Typography variant="body2">
-              To calculate how much you would save on your energy and fuel
-              bills, we first determine much of the electricity needs are met by
-              solar, battery storage, or the grid, and how much solar-generated
-              power is left for export. We assume that half of a household's
-              appliance and vehicle electricity needs can be met by generated
-              solar (50% self-consumption). This is a conservative estimate of
-              how much energy consumption can be shifted to daylight hours.
+              We price each fuel using 2026 retail prices for your state:
+              electricity, gas, LPG, petrol, diesel and public fast charging.
+              Weekly and yearly savings use current prices; savings over 15
+              years use forecast prices that rise in line with each fuel's
+              long-run price growth.
             </Typography>
             <Typography variant="body2">
-              Next, we calculate energy costs for each fuel type, including
-              electricity. We price the electricity consumed from the grid at a
-              weighted proportion between regular volume costs and off-peak
-              costs based on the battery's ability to shift grid consumption to
-              off-peak hours. For other energy & fuel types like gas, petrol,
-              and diesel, we simply multiply the energy consumption with the
-              price per kWh. Weekly and yearly savings use 2025 prices, while
-              savings over 15 years consider future price inflation.
+              Homes that still use gas, or don't have both solar and a battery,
+              are priced on a flat electricity tariff. A fully electric home with
+              solar and a battery can shift its use away from expensive times, so
+              we price it on a time-of-use tariff. Where this applies, we show
+              how much of your saving comes from the tariff switch.
             </Typography>
             <Typography variant="body2">
-              Fixed costs (like gas, LPG, or grid connections) are added. Vehicle maintenance/servicing costs are not yet
-              included, although they tend to be lower for EVs. Solar export
-              revenue is then subtracted from the bills to get total operating
-              costs. Learn more about our sister org Rewiring Aotearoa's advocacy on fair solar export
-              prices from{" "}
+              Each fuel you're connected to adds its daily supply charge, so
+              disconnecting from gas is a real saving. Solar you export earns
+              your state's average feed-in tariff, which is subtracted from your
+              bills. Car servicing (including tyres and consumables, but not
+              registration or insurance) is added for each vehicle, based on its
+              size and whether it&apos;s electric: for example $750 a year for a
+              small petrol car and $510 for a small EV. Learn more about our sister org Rewiring
+              Aotearoa's advocacy on fair solar export prices from{" "}
               <Link
                 href="https://www.rewiring.nz/symmetrical-export-tariffs"
                 target="_blank"
@@ -269,16 +272,18 @@ const Methodology: React.FC = () => {
               secondhand EVs available in the market now. Also, when buying a
               new car, you would usually take into account the purchase price
               (what we’ve shown) minus the resale value. So you wouldn’t
-              normally be losing $30k-$70k outright for every EV you buy.
+              normally be losing $20k-$70k outright for every EV you buy.
             </Typography>
             <Typography variant="body2">
-              The upfront cost of solar installation is estimated at $950/kW
-              using data from Solar Choice. Inverter replacement costs are
-              assumed at $2,500. Battery upfront costs are modelled with a fixed
-              cost of $2,668 plus $610 per kWh of storage
-              (this includes the discount from the Cheaper Home Batteries
-              program as of February 2026). Real costs will vary by region and
-              installer.
+              Solar panels are priced per kW for your state (from $533/kW in
+              the ACT to $1,490/kW in the NT), plus an inverter ($1,800, or
+              microinverters at $300/kW for systems of 5 kW or less). Batteries
+              are $620 per kWh of storage, including the Cheaper Home Batteries
+              discount, with a $2,300 installation charge if added to existing
+              solar. Heat pump heating assumes $3,200 per unit, with 1 to 3 units
+              depending on your state&apos;s climate. State rebates available to
+              every household (and to apartments) are deducted. Real costs will
+              vary by region and installer.
             </Typography>
             <Typography variant="h2">Recommendations (Next Steps)</Typography>
             <Typography variant="body2">
@@ -316,7 +321,7 @@ const Methodology: React.FC = () => {
             <Typography variant="body2">
               🤓&nbsp;
               <Link
-                href="https://github.com/Rewiring-Aus/household-model/blob/main/METHODOLOGY.md"
+                href="https://github.com/Rewiring-Aus/energy-savings-2026-model/blob/main/Methodology_v1.md"
                 target="_blank"
               >
                 Dive into our detailed methodology

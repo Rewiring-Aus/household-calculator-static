@@ -1,73 +1,83 @@
-import { BATTERY_COST_INTERCEPT, BATTERY_COST_PER_KWH } from '../../constants/battery';
-import { COOKTOP_UPFRONT_COST } from '../../constants/machines/cooktop';
+// Upfront cost of each upgrade, from the Energy Savings 2026 model's product
+// prices (installed, AUS) net of state subsidies the calculator can check
+// eligibility for (everyone, or by dwelling type).
+
 import {
-  N_HEAT_PUMPS_NEEDED_PER_LOCATION,
-  SPACE_HEATING_UPFRONT_COST,
-} from '../../constants/machines/spaceHeating';
-import { WATER_HEATING_UPFRONT_COST } from '../../constants/machines/waterHeating';
-import { SOLAR_COST_PER_KW } from '../../constants/solar';
+  CAPEX,
+  HEATERS_PER_HOME,
+  MODEL_DEFAULTS,
+  SOLAR_BY_STATE,
+  STATE_CODE,
+  SUBSIDIES,
+  type StateCode,
+} from '../../constants/model2026';
 import { shouldInstall } from '../../models/electrifyHousehold';
-import type { Battery, Household, LocationEnum, Solar, UpfrontCost } from '../../types';
+import {
+  CooktopEnum,
+  DwellingEnum,
+  SpaceHeatingEnum,
+  WaterHeatingEnum,
+  type Household,
+  type UpfrontCost,
+} from '../../types';
 
-function getSolarUpfrontCost(current: Solar, location: LocationEnum): number {
-  if (shouldInstall(current)) {
-    return Math.round(SOLAR_COST_PER_KW[location] * (current.size ?? 0) * 100) / 100;
-  }
-  return 0;
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+/** Most generous applicable subsidy (they don't stack), as in the R model. */
+function subsidy(state: StateCode, appliance: 'Solar' | 'Heat pump', dwelling?: DwellingEnum): number {
+  const eligible = SUBSIDIES.filter(
+    (s) =>
+      s.state === state &&
+      s.appliance === appliance &&
+      (s.eligibility === 'All' || (s.eligibility === 'Apartment' && dwelling === DwellingEnum.Apartment)),
+  );
+  return Math.max(0, ...eligible.map((s) => s.value));
 }
 
-function getBatteryUpfrontCost(current: Battery): number {
-  if (shouldInstall(current)) {
-    return Math.round((BATTERY_COST_INTERCEPT + BATTERY_COST_PER_KWH * (current.capacity ?? 0)) * 100) / 100;
-  }
-  return 0;
+/** Panels at the state $/kW less any rebate (off the panels only), plus the inverter. */
+function solarCost(state: StateCode, kw: number, dwelling?: DwellingEnum): number {
+  if (kw <= 0) return 0;
+  const { costPerKw, inverterCost } = SOLAR_BY_STATE[state];
+  const panels = Math.max(0, costPerKw * kw - subsidy(state, 'Solar', dwelling));
+  const inverter =
+    kw <= MODEL_DEFAULTS.microinverterMaxSolarKwp ? MODEL_DEFAULTS.microinverterCostPerKw * kw : inverterCost;
+  return panels + inverter;
 }
 
-function getCooktopUpfrontCost(current: string, electrified: string): number {
-  if (current === electrified) return 0;
-  const costInfo = COOKTOP_UPFRONT_COST[electrified];
-  if (!costInfo) return 0;
-  return Math.round((costInfo.item_price + costInfo.install_cost) * 100) / 100;
-}
-
-function getWaterHeatingUpfrontCost(current: string, electrified: string): number {
-  if (current === electrified) return 0;
-  const costInfo = WATER_HEATING_UPFRONT_COST[electrified];
-  if (!costInfo || costInfo.item_price == null || costInfo.install_cost == null) return 0;
-  return Math.round((costInfo.item_price + costInfo.install_cost) * 100) / 100;
-}
-
-function getSpaceHeatingUpfrontCost(
-  current: string,
-  electrified: string,
-  location: LocationEnum,
-): number {
-  if (current === electrified) return 0;
-  const costInfo = SPACE_HEATING_UPFRONT_COST[electrified];
-  if (!costInfo) return 0;
-  const costPerHeater = costInfo.item_price + costInfo.install_cost;
-  const nHeaters = N_HEAT_PUMPS_NEEDED_PER_LOCATION[location] ?? 2;
-  return Math.round(costPerHeater * nHeaters * 100) / 100;
+/**
+ * Battery at the federally subsidised $/kWh. Installed alongside new solar the
+ * crew is already on site, so there's no separate installation charge; added to
+ * existing solar it pays the installation fee.
+ */
+function batteryCost(kwh: number, installingSolarToo: boolean): number {
+  if (kwh <= 0) return 0;
+  return CAPEX.batteryPerKwhWithSolar * kwh + (installingSolarToo ? 0 : CAPEX.batteryInstallation);
 }
 
 export function calculateUpfrontCost(current: Household, electrified: Household): UpfrontCost {
+  const state = STATE_CODE[current.location!];
   const installSolar = shouldInstall(current.solar!);
   const installBattery = shouldInstall(current.battery!);
+  const heatPumpSubsidy = subsidy(state, 'Heat pump', current.dwelling);
 
-  let batteryCost = getBatteryUpfrontCost(current.battery!);
-  if (installSolar && installBattery) {
-    batteryCost = Math.max(0, batteryCost - BATTERY_COST_INTERCEPT);
-  }
+  const spaceHeating =
+    current.spaceHeating !== electrified.spaceHeating && electrified.spaceHeating === SpaceHeatingEnum.ElectricHeatPump
+      ? Math.max(0, CAPEX.heatPumpHeater * HEATERS_PER_HOME[state] - heatPumpSubsidy)
+      : 0;
+  const waterHeating =
+    current.waterHeating !== electrified.waterHeating && electrified.waterHeating === WaterHeatingEnum.ElectricHeatPump
+      ? Math.max(0, CAPEX.heatPumpWaterHeater - heatPumpSubsidy)
+      : 0;
+  const cooktop =
+    current.cooktop !== electrified.cooktop && electrified.cooktop === CooktopEnum.ElectricInduction
+      ? CAPEX.inductionCooktop
+      : 0;
 
   return {
-    solar: getSolarUpfrontCost(current.solar!, current.location!),
-    battery: batteryCost,
-    cooktop: getCooktopUpfrontCost(current.cooktop!, electrified.cooktop!),
-    waterHeating: getWaterHeatingUpfrontCost(current.waterHeating!, electrified.waterHeating!),
-    spaceHeating: getSpaceHeatingUpfrontCost(
-      current.spaceHeating!,
-      electrified.spaceHeating!,
-      electrified.location!,
-    ),
+    solar: round2(installSolar ? solarCost(state, current.solar!.size ?? 0, current.dwelling) : 0),
+    battery: round2(installBattery ? batteryCost(current.battery!.capacity ?? 0, installSolar) : 0),
+    cooktop: round2(cooktop),
+    waterHeating: round2(waterHeating),
+    spaceHeating: round2(spaceHeating),
   };
 }

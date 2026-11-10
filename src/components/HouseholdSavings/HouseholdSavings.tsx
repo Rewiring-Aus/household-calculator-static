@@ -42,7 +42,7 @@ export interface SavingsProps {
 }
 
 const getVehicleCostStr = (numEVsToBuy: number): string => {
-  const priceRangeLow = 30000;
+  const priceRangeLow = 20000;
   const priceRangeHigh = 70000;
   const totalPriceKsRangeLow = ((priceRangeLow * numEVsToBuy) / 1000).toFixed(
     0,
@@ -149,6 +149,19 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
             </span>{" "}
             saved over 15 year product lifetime
           </Typography>
+          {results?.tariffSwitch && results.tariffSwitch.perYear >= 1 && (
+            <Typography
+              variant="body2"
+              sx={{ marginTop: "0.6rem", color: theme.palette.text.secondary }}
+            >
+              Includes{" "}
+              <span style={{ fontWeight: "600" }}>
+                {formatSavingsNZD(-results.tariffSwitch.perYear, 0)} per year
+              </span>{" "}
+              from switching to a time-of-use electricity plan, which your
+              solar and battery let you make the most of.
+            </Typography>
+          )}
         </ResultBox>
 
         <FDivider />
@@ -215,7 +228,7 @@ const HouseholdSavings: React.FC<SavingsProps> = ({
                 <span style={{ fontWeight: "600" }}>
                   for {numEVsToBuy} new EVs.
                 </span>{" "}
-                New mid-range EVs cost $30k-$70k each, depending on the model.
+                New mid-range EVs cost $20k-$70k each, depending on the model.
                 Secondhand EVs start at ~$3k.&nbsp;
                 <Link
                   href={electricVehicleURL}

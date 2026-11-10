@@ -21,7 +21,7 @@ import { FDivider } from "src/shared/styles/FDivider";
 import { HouseSwitch } from "./HouseSwitch";
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { VehicleFuelTypeEnum } from "src/calculator/types";
+import { VehicleClassEnum, VehicleFuelTypeEnum } from "src/calculator/types";
 import { SwitchLabel } from "../HouseholdForm.styles";
 import chevronDown from "src/assets/icons/chevron-down.svg";
 import chevronUp from "src/assets/icons/chevron-up.svg";
@@ -36,6 +36,7 @@ interface VehicleBoxProps extends VehicleObject {
   // control: any;
   // setValue: any;
   fuelTypeOptions: Option<VehicleFuelTypeEnum>[];
+  classOptions: Option<VehicleClassEnum>[];
   onDelete: (index: number) => void;
   // onDelete: (id: string) => void;
   usageOptions: UsageOption[];
@@ -48,6 +49,8 @@ const VehicleBox = React.forwardRef<HTMLDivElement, VehicleBoxProps>((props, ref
     id,
     fuelType,
     fuelTypeOptions,
+    classOptions,
+    vehicleClass,
     usageOptions,
     index,
     // register,
@@ -317,6 +320,40 @@ const VehicleBox = React.forwardRef<HTMLDivElement, VehicleBoxProps>((props, ref
               flexDirection: "column",
             }}
           >
+            <Typography variant="body2">Size</Typography>
+
+            <FormControl
+              className="VehicleBox-class"
+              size="small"
+              sx={{
+                marginBottom: "1rem",
+                "& .MuiInputBase-root": {
+                  maxHeight: "2.438rem",
+                },
+              }}
+            >
+              <Controller
+                name={`vehicleObjs.${index}.vehicleClass`}
+                control={control}
+                defaultValue={vehicleClass ?? VehicleClassEnum.Suv}
+                render={({ field }) => (
+                  <Select
+                    id={`vehicles-class-${index}`}
+                    inputProps={{ "aria-label": `Car ${index + 1} size` }}
+                    value={field.value ?? VehicleClassEnum.Suv}
+                    onChange={field.onChange}
+                    MenuProps={{ disableScrollLock: true, disablePortal: true }}
+                  >
+                    {classOptions.map((option: Option<VehicleClassEnum>) => (
+                      <MenuItem key={`class-${option.value}`} value={option.value}>
+                        <Typography variant="h5">{option.text}</Typography>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
+
             <Typography variant="body2">Usage per week</Typography>
 
             <FormControl
